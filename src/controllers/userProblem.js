@@ -1,5 +1,6 @@
 const problem= require('../models/problem');
-const {languageId,submitbatch}= require('../utils/problemUitlity');
+
+const {getLanguageById,submitBatch,finalresult}= require('../utils/problemUitlity');
 
 
 const createProblem = async (req,res)=>{
@@ -13,7 +14,7 @@ const createProblem = async (req,res)=>{
 
         for(const {language,completeCode} of referenceSolution)
         {
-            const languageId =languageId(language);
+            const languageId =getLanguageById(language);
 
 
             const submissions = visibleTestCases.map((testcase)=>({
@@ -24,12 +25,33 @@ const createProblem = async (req,res)=>{
                 }))
         }
 
-        const submitResult = await submitbatch(submissions);
+        const submitResult = await submitBatch(submissions);
 
+        const tokens = submitResult.map((value)=> value.token);
+        const finalresult= await finalresult(tokens);
+        
+
+
+        for(const test of finalresult)
+        {
+            if(test.status_id!=3) 
+            return res.status(400).send("Error Occured");
+        }
+
+        const userPrroblem =await problem.create({
+            ...req.body,
+            problemCreator: req.result._id
+        });
+
+        res.status(201).send("Problem Saved Successfully");
     }
 
     catch(err)
     {
         throw "error is Creating problem"+err; 
     }
+
+
 }
+
+module.exports={createProblem};

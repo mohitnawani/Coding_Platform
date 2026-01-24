@@ -72,7 +72,7 @@ const problemSchema = new Schema({
         }
     ],
 
-    PoblemCreator:{
+    ProblemCreator:{
         type:Schema.Types.ObjectId,
         ref:'User',
         required:true
