@@ -32,7 +32,7 @@ const createProblem = async (req, res) => {
         expected_output: testcase.output,
       }));
 
-      //   console.log(submissions);
+        console.log(submissions);
 
       const submitResult = await submitBatch(submissions);
       //   console.log(submitResult);
@@ -114,6 +114,51 @@ const updateProblem = async (req, res) => {
   }
 };
 
+const deletedProblem = async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!id) return res.status(400).send("This id is not present");
+
+    const Deleted_Id = await problem.findByIdAndDelete(id);
+    if (!Deleted_Id) return res.status(404).send("problem is not present");
+
+    res.status(200).send("Problem is deleted SucessFully");
+  } catch (err) {
+    res.status(500).send("Error: " + err);
+  }
+};
+
+const getProblemById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if(!id) return res.status(400).send("ID is not Correct")
+
+      const GetById=await problem.findById(id);
+      if(!GetById) return res.staus(400).send("Problem is not present");
+
+      res.status(2000).send(GetById);
+  } 
+
+  catch (err) {
+    res.status(500).send("Error: " + err);
+  }
+};
+
+const getAllProblem = async (req,res)=>{
+  try{
+    const AllProblem= await problem.find({});
+
+    if(!AllProblem) return res.status(404).send("Problems Not Found")
+
+      res.status(200).send(AllProblem);
+}
+
+  catch(err){
+    res.status().send()("Error :"+err) 
+  }
+}
 
 
-module.exports = { createProblem, updateProblem };
+
+module.exports = { createProblem, updateProblem, deletedProblem,getProblemById,getAllProblem };
