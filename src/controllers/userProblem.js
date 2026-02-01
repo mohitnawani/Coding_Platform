@@ -32,13 +32,15 @@ const createProblem = async (req, res) => {
         expected_output: testcase.output,
       }));
 
-        console.log(submissions);
+        // console.log(submissions);
 
       const submitResult = await submitBatch(submissions);
       //   console.log(submitResult);
 
       const tokens = submitResult.map((value) => value.token);
       const finalresult = await submitToken(tokens);
+
+      console.log(finalresult);
 
       for (const test of finalresult) {
         if (test.status_id != 3) return res.status(400).send("Error Occured");
@@ -159,6 +161,21 @@ const getAllProblem = async (req,res)=>{
   }
 }
 
+const solvedAllProblembyUser =async (req , res)=>{
+  try{
+    const userId =req.result._id;
+    const user =await User.findById (userId).populate('problemSolved')
+    res.status(200).send(user.problemSolved);
+  }
+
+  catch(err)
+  {
+    res.status(500).send("Error :" + err);
+  }
+}
 
 
-module.exports = { createProblem, updateProblem, deletedProblem,getProblemById,getAllProblem };
+
+
+
+module.exports = { createProblem, updateProblem, deletedProblem,getProblemById,getAllProblem,solvedAllProblembyUser};

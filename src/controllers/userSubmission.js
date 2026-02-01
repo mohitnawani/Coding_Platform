@@ -1,5 +1,6 @@
 const problem = require("../models/problem");
 const submission = require("../models/submission");
+const problemRouter = require("../routes/problemCreator");
 
 const {
   getLanguageById,
@@ -26,17 +27,19 @@ const submitCode = async (req, res) => {
       return res.status(404).send("Problem not found");
     }
 
+    // console.log(Problem_Data.HiddenTestCases)
+
     const submittedResult = await submission.create({
       userId,
       problemId,
       code,
       language,
       status: "pending",
-      Totaltestcases: Problem_Data.HiddenTestCases.length
+      Totaltestcases: Problem_Data.visibleTestCases.length
     });
 
     const langauage_id = getLanguageById(language);
-    const submissions = Problem_Data.HiddenTestCases.map((testcase) => ({
+    const submissions = Problem_Data.visibleTestCases.map((testcase) => ({
       source_code: code,
       language_id: langauage_id,
       stdin: testcase.input,
@@ -51,7 +54,9 @@ const submitCode = async (req, res) => {
     
     const testResult = await submitToken(resultToken);
 
-    // console.log(testResult)
+
+
+    console.log(testResult)
 
 
     let testCasesPassed = 0;
@@ -86,6 +91,12 @@ const submitCode = async (req, res) => {
     submittedResult.runtime = runtime;
     submittedResult.memory = memory;
     await submittedResult.save();
+
+    if(!req.result.problemSolved.includes(problemId))
+    {
+      req.result.problemSolved.push(problemId);
+      await req.result.save();
+    }
 
     return res.status(200).send("Submission received");
 

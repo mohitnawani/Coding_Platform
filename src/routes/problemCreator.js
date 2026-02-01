@@ -13,8 +13,8 @@ problemRouter.put("/update/:id",adminMiddleware, updateProblem);
 problemRouter.delete("/delete/:id",adminMiddleware, deletedProblem);
 
 
-// problemRouter.get("/problemById/:id",userMiddleware,getProblemById);
-// problemRouter.get("/getAllProblem",userMiddleware, getAllProblem);
-// problemRouter.get("/problemSolvedByUser",userMiddleware, solvedAllProblembyUser);
+problemRouter.get("/problemById/:id",userMiddleware,getProblemById);
+problemRouter.get("/getAllProblem",userMiddleware, getAllProblem);
+problemRouter.get("/problemSolvedByUser",userMiddleware, solvedAllProblembyUser);
 
 module.exports = problemRouter;

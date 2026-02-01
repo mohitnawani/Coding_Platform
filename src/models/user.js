@@ -35,8 +35,8 @@ const userSchema= new schema(
     },
 
     problemSolved:{
-        type:Number,
-        default: 0
+        type:[String],
+        default: []
     },
     password:
     {
