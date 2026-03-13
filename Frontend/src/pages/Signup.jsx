@@ -1,89 +1,113 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import {registerUser} from '../authSlice'
+import { useEffect } from 'react';
 
-const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+const signupSchema = z.object({
+  firstName: z.string().min(3, "Minimum character should be 3"),
+  emailId: z.string().email("Invalid Email"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must include one uppercase letter")
+    .regex(/[a-z]/, "Password must include one lowercase letter")
+    .regex(/[0-9]/, "Password must include one number")
+    .regex(/[^A-Za-z0-9]/, "Password must include one special character")
 });
 
-function MyForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(schema)
-  });
+function Signup() {
+   
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(signupSchema) });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated,navigate]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    // Handle form submission here
+    dispatch(registerUser({ ...data, problemSolved: [] }));
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
-      <div className="card w-full max-w-md bg-base-100 shadow-xl">
+    <div className="min-h-screen flex items-center justify-center p-4"> {/* Centering container */}
+      <div className="card w-96 bg-base-100 shadow-xl"> {/* Existing card styling */}
         <div className="card-body">
-          <h2 className="card-title text-2xl font-bold mb-4">Sign Up</h2>
-          
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="form-control w-full">
-              <label className="label" htmlFor="name">
-                <span className="label-text">Name</span>
+          <h2 className="card-title justify-center text-3xl">Leetcode</h2> {/* Centered title */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Existing form fields */}
+            <div className="form-control">
+              <label className="label mb-1">
+                <span className="label-text">First Name</span>
               </label>
               <input
-                id="name"
                 type="text"
-                placeholder="Enter your name"
-                className={`input input-bordered w-full ${errors.name ? 'input-error' : ''}`}
-                {...register('name')}
+                placeholder="John"
+                className={`input input-bordered ${errors.firstName && 'input-error'}`}
+                {...register('firstName')}
               />
-              {errors.name && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{errors.name.message}</span>
-                </label>
+              {errors.firstName && (
+                <span className="text-error">{errors.firstName.message}</span>
               )}
             </div>
 
-            <div className="form-control w-full">
-              <label className="label" htmlFor="email">
+            <div className="form-control  mt-4">
+              <label className="label mb-1">
                 <span className="label-text">Email</span>
               </label>
               <input
-                id="email"
                 type="email"
-                placeholder="Enter your email"
-                className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
-                {...register('email')}
+                placeholder="john@example.com"
+                className={`input input-bordered ${errors.emailId && 'input-error'}`}
+                {...register('emailId')}
               />
-              {errors.email && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{errors.email.message}</span>
-                </label>
+              {errors.emailId && (
+                <span className="text-error">{errors.emailId.message}</span>
               )}
             </div>
 
-            <div className="form-control w-full">
-              <label className="label" htmlFor="password">
+            <div className="form-control mt-4">
+              <label className="label mb-1">
                 <span className="label-text">Password</span>
               </label>
               <input
-                id="password"
                 type="password"
-                placeholder="Enter your password"
-                className={`input input-bordered w-full ${errors.password ? 'input-error' : ''}`}
+                placeholder="••••••••"
+                className={`input input-bordered ${errors.password && 'input-error'}`}
                 {...register('password')}
               />
               {errors.password && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{errors.password.message}</span>
-                </label>
+                <span className="text-error">{errors.password.message}</span>
               )}
             </div>
 
-            <div className="form-control mt-6">
-              <button type="submit" className="btn btn-primary w-full">
-                Submit
+            <div className="form-control mt-6 flex justify-center">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? 'Signing Up...' : 'Sign Up'}
               </button>
             </div>
+
+            <div className="form-control mt-4 flex justify-center items-center">
+              <p>Already have an account? <a href="/login" className="text-blue-500 hover:underline">Login</a></p>
+            </div>
+            {error && (
+              <p className="mt-3 text-center text-sm text-error">{error}</p>
+            )}
           </form>
         </div>
       </div>
@@ -91,4 +115,7 @@ function MyForm() {
   );
 }
 
-export default MyForm;
+export default Signup;
+
+
+

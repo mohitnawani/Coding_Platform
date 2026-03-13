@@ -1,6 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosClient from './utils/axiosClient'
 
+const getErrorMessage = (error, fallback) => {
+  const data = error?.response?.data;
+  if (typeof data === 'string' && data.trim()) return data;
+  if (data?.message) return data.message;
+  return fallback;
+};
+
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -8,7 +15,7 @@ export const registerUser = createAsyncThunk(
     const response =  await axiosClient.post('/user/register', userData);
     return response.data.user;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(getErrorMessage(error, 'Registration failed'));
     }
   }
 );
@@ -21,7 +28,7 @@ export const loginUser = createAsyncThunk(
       const response = await axiosClient.post('/user/login', credentials);
       return response.data.user;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(getErrorMessage(error, 'Login failed'));
     }
   }
 );
@@ -33,7 +40,8 @@ export const checkAuth = createAsyncThunk(
       const { data } = await axiosClient.get('/user/check');
       return data.user;
     } catch (error) {
-      return rejectWithValue(error);
+      if (error?.response?.status === 401) return null;
+      return rejectWithValue(getErrorMessage(error, 'Auth check failed'));
     }
   }
 );
@@ -42,10 +50,10 @@ export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await axiosClient.post('/logout');
+      await axiosClient.post('/user/logout');
       return null;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(getErrorMessage(error, 'Logout failed'));
     }
   }
 );
@@ -74,7 +82,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload || action.error.message || 'Something went wrong';
         state.isAuthenticated = false;
         state.user = null;
       })
@@ -91,7 +99,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload || action.error.message || 'Something went wrong';
         state.isAuthenticated = false;
         state.user = null;
       })
@@ -108,7 +116,7 @@ const authSlice = createSlice({
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload || action.error.message || null;
         state.isAuthenticated = false;
         state.user = null;
       })
@@ -126,7 +134,7 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Something went wrong';
+        state.error = action.payload || action.error.message || 'Something went wrong';
         state.isAuthenticated = false;
         state.user = null;
       });

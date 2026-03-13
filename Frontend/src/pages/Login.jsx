@@ -1,69 +1,92 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import {loginUser} from "../authSlice"
+import { useEffect } from 'react';
 
-const schema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+const signupSchema = z.object({
+  emailId: z.string().email("Invalid Email"),
+  password: z.string().min(8, "Password is to weak")
 });
 
-function MyForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(schema)
-  });
+function Login() {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(signupSchema) });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    // Handle form submission here
+    dispatch(loginUser(data));
   };
 
-  return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
-      <div className="card w-full max-w-md bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title text-2xl font-bold mb-4">Sign Up</h2>
-          
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+  if (loading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <p>Loading...</p>
+        </div>
+      )
+  }
 
-            <div className="form-control w-full">
-              <label className="label" htmlFor="email">
+
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4"> {/* Centering container */}
+      <div className="card w-96 bg-base-100 shadow-xl"> {/* Existing card styling */}
+        <div className="card-body">
+          <h2 className="card-title justify-center text-3xl">Leetcode</h2> {/* Centered title */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Existing form fields */}
+
+            <div className="form-control  mt-4">
+              <label className="label mb-1">
                 <span className="label-text">Email</span>
               </label>
               <input
-                id="email"
                 type="email"
-                placeholder="Enter your email"
-                className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
-                {...register('email')}
+                placeholder="john@example.com"
+                className={`input input-bordered ${errors.emailId && 'input-error'}`}
+                {...register('emailId')}
               />
-              {errors.email && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{errors.email.message}</span>
-                </label>
+              {errors.emailId && (
+                <span className="text-error">{errors.emailId.message}</span>
               )}
             </div>
 
-            <div className="form-control w-full">
-              <label className="label" htmlFor="password">
+            <div className="form-control mt-4">
+              <label className="label mb-1">
                 <span className="label-text">Password</span>
               </label>
               <input
-                id="password"
                 type="password"
-                placeholder="Enter your password"
-                className={`input input-bordered w-full ${errors.password ? 'input-error' : ''}`}
+                placeholder="••••••••"
+                className={`input input-bordered ${errors.password && 'input-error'}`}
                 {...register('password')}
               />
               {errors.password && (
-                <label className="label">
-                  <span className="label-text-alt text-error">{errors.password.message}</span>
-                </label>
+                <span className="text-error">{errors.password.message}</span>
               )}
             </div>
 
-            <div className="form-control mt-6">
-              <button type="submit" className="btn btn-primary w-full">
-                Submit
+            <div className="form-control mt-6 flex justify-center">
+              <button
+                type="submit"
+                className="btn btn-primary"
+              >
+                Login
               </button>
             </div>
           </form>
@@ -73,4 +96,6 @@ function MyForm() {
   );
 }
 
-export default MyForm;
+export default Login;
+
+
