@@ -5,9 +5,13 @@ import Signup from "./pages/Signup";
 import {useDispatch,useSelector} from 'react-redux'
 import {useEffect, useRef} from 'react'
 import { checkAuth } from "./authSlice";
+import AdminPanel from "./pages/AdminPanel";
+import Createproblem from "./pages/Createproblem";
+import Deleteproblem from "./pages/Deleteproblem";
+import Updateproblem from "./pages/Updateproblem";
 
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated,user,loading} = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const location = useLocation();
   const didCheckAuth = useRef(false);
@@ -25,6 +29,14 @@ function App() {
         <Route path="/" element={isAuthenticated?<Homepage />:<Navigate to="/signup" />} />
         <Route path="/login" element={isAuthenticated?<Navigate to="/"/>:<Login />} />
         <Route path="/signup" element={isAuthenticated?<Navigate to="/"/>:<Signup />} />
+
+        {/* <Route path="/admin" element={isAuthenticated && user.role === 'admin' ? <AdminPanel /> : <Navigate to="/" /> } /> */}
+
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/admin/create"  element={<Createproblem />} />       {/* your existing create form */}
+        <Route path="/admin/delete"  element={<Deleteproblem />} />   {/* delete list page */}
+        <Route path="/admin/update"  element={<Updateproblem />} />   {/* update list page */}
+
       </Routes>
   );
 }
