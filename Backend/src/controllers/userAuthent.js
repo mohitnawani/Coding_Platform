@@ -25,7 +25,9 @@ const register = async (req, res) => {
     const reply={
       firstName:user.firstName,
       emailId:user.emailId,
-      _id:user._id
+      _id:user._id,
+      role:user.role
+
     }
     res.status(200).json({
       user:reply,
@@ -67,8 +69,12 @@ const login = async (req, res) => {
     const reply={
       firstName:user.firstName,
       emailId:user.emailId,
-      _id:user._id
+      _id:user._id,
+      role:user.role
     }
+    console.log("user from DB:", user); // ← check if role exists here
+    console.log("role value:", user.role); // ← is it undefined?
+    
     res.status(200).json({
       user:reply,
       message:"Loggin Sucessfully"

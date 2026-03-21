@@ -75,7 +75,6 @@ const problemSchema = new Schema({
     ProblemCreator:{
         type:Schema.Types.ObjectId,
         ref:'User',
-        required:true
     },
 
     referenceSolution:[

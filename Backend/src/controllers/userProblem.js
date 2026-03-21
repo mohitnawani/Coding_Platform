@@ -8,7 +8,7 @@ const {
 } = require("../utils/problemUitlity");
 
 const createProblem = async (req, res) => {
-  // console.log(req.body)
+  console.log(req.body)
   const {
     title,
     description,
@@ -18,7 +18,6 @@ const createProblem = async (req, res) => {
     hiddenTestCases,
     startCode,
     referenceSolution,
-    problemCreator,
   } = req.body;
 
   try {
@@ -49,11 +48,14 @@ const createProblem = async (req, res) => {
     }
 
     // console.log(req.body);
+    console.log(req.result._id);
 
     const userProblem = await problem.create({
       ...req.body,
       problemCreator: req.result._id,
     });
+
+
 
     res.status(201).send("Problem Saved Successfully");
   } catch (err) {
@@ -133,18 +135,29 @@ const deletedProblem = async (req, res) => {
 
 const getProblemById = async (req, res) => {
   const { id } = req.params;
-
   try {
-    if(!id) return res.status(400).send("ID is not Correct")
+    if (!id) return res.status(400).json({ message: "ID is not provided" });
 
-      const GetById=await problem.findById(id);
-      if(!GetById) return res.staus(400).send("Problem is not present");
+    const foundProblem = await problem.findById(id);
+    if (!foundProblem) return res.status(404).json({ message: "Problem not found" });
 
-      res.status(2000).send(GetById);
-  } 
+    res.status(200).json({
+      problem: {
+        _id:               foundProblem._id,
+        title:             foundProblem.title,
+        description:       foundProblem.description,
+        difficulty:        foundProblem.difficulty,
+        tags:              foundProblem.tags,
+        visibleTestCases:  foundProblem.visibleTestCases,
+        HiddenTestCases:   foundProblem.HiddenTestCases,
+        ProblemCreator:    foundProblem.ProblemCreator,
+        referenceSolution: foundProblem.referenceSolution,
+        StartCode:         foundProblem.StartCode,
+      }
+    });
 
-  catch (err) {
-    res.status(500).send("Error: " + err);
+  } catch (err) {
+    res.status(500).json({ message: "Error: " + err.message });
   }
 };
 

@@ -164,9 +164,9 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
             >
               <span className="text-gray-600 w-5 text-xs">{i + 1}</span>
 
-              <span className="flex-1 text-gray-200 group-hover:text-white transition-colors font-medium">
-                {p.title}
-              </span>
+              <NavLink to={`/problem/${p._id}`} className="flex-1 text-gray-200 group-hover:text-white transition-colors font-medium">
+                  {p.title}
+              </NavLink>
 
               <div className="flex gap-1.5 w-28 justify-center flex-wrap">
                 {(Array.isArray(p.tags) ? p.tags : [p.tags]).map((tag) => (
