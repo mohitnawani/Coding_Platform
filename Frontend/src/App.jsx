@@ -1,25 +1,31 @@
 import { Routes, Route, Navigate, useLocation } from "react-router";
 import Homepage from "./pages/Homepage";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import {useDispatch,useSelector} from 'react-redux'
-import {useEffect, useRef, useState} from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
 import { checkAuth } from "./authSlice";
 import AdminPanel from "./pages/AdminPanel";
 import Createproblem from "./pages/Createproblem";
 import Deleteproblem from "./pages/Deleteproblem";
 import Updateproblem from "./pages/Updateproblem";
 import ProblemPage from "./pages/ProblemPage";
+import Explore from "./pages/Navbar/Explore";
+import Discuss from "./pages/Navbar/Discuss";
+import Contest from "./pages/Navbar/Contest";
+import LeaderBoard from "./pages/Navbar/LeaderBoard";
+import Problems from "./pages/Navbar/Problems";
 
 
 function App() {
-  const { isAuthenticated,user,loading} = useSelector((state) => state.auth);
+  const { isAuthenticated, user, loading } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const location = useLocation();
   const didCheckAuth = useRef(false);
   const [bootstrapped, setBootstrapped] = useState(false);
-  const isAdmin = user?.role && typeof user.role === 'string' ? user.role.toLowerCase() === 'admin' : false;
+  const isAdmin = user?.role && typeof user.role === "string" ? user.role.toLowerCase() === "admin" : false;
 
   useEffect(() => {
     if (didCheckAuth.current) return;
@@ -36,15 +42,16 @@ function App() {
   return (
     <Routes>
 
-      {/* Public Entry Point */}
+      {/* Public Landing */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Authenticated home (former landing target) */}
       <Route
-        path="/"
+        path="/home"
         element={
-          !isAuthenticated
-            ? <Login />
-            : isAdmin
-              ? <Navigate to="/admin" />
-              : <Homepage />
+          isAuthenticated
+            ? (isAdmin ? <Navigate to="/admin" /> : <Homepage />)
+            : <Navigate to="/login" />
         }
       />
 
@@ -56,7 +63,7 @@ function App() {
             ? <Login />
             : isAdmin
               ? <Navigate to="/admin" />
-              : <Navigate to="/" />
+              : <Navigate to="/home" />
         }
       />
 
@@ -66,7 +73,7 @@ function App() {
         element={
           !isAuthenticated
             ? <Signup />
-            : <Navigate to="/" />
+            : <Navigate to="/home" />
         }
       />
 
@@ -78,6 +85,14 @@ function App() {
 
       {/* User Routes */}
       <Route path="/problem/:id" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
+
+      {/* Navbar routes are here but not implemented yet */}
+      <Route path="/explore" element={<Explore />} />
+      <Route path="/discuss" element={<Discuss />} />
+      <Route path="/contest" element={<Contest />} />
+      <Route path="/leaderboard" element={<LeaderBoard />} />
+      <Route path="/problems" element={<Problems />} />  
+
 
     </Routes>
   );

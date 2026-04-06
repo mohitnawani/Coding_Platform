@@ -9,6 +9,8 @@ const getLanguageById = (lang) => {
   return language[lang.toLowerCase()];
 };
 
+const toBase64 = (text = "") => Buffer.from(text, "utf-8").toString("base64");
+
 // const async timer(()=>{
 
 // })
@@ -21,12 +23,18 @@ const waiting = async(timer)=>{
 
 const submitBatch = async (submissions) => {
   // console.log(submissions);
+  const encodedSubmissions = submissions.map((s) => ({
+    ...s,
+    source_code: toBase64(s.source_code),
+    stdin: toBase64(s.stdin),
+    expected_output: toBase64(s.expected_output ?? ""),
+  }));
 
 const options = {
   method: 'POST',
   url: 'https://judge0-ce.p.rapidapi.com/submissions/batch',
   params: {
-    base64_encoded: 'false'
+    base64_encoded: 'true'
   },
   headers: {
     'x-rapidapi-key': '079b3b05d7msha3a735d42296d05p1c42e0jsn0f817c38907c',
@@ -34,7 +42,7 @@ const options = {
     'Content-Type': 'application/json'
   },
   data: {
-    submissions
+    submissions: encodedSubmissions
   }
 };
 

@@ -23,7 +23,7 @@ const problemSchema = z.object({
       })
     )
     .min(1, "At least one visible test case required"),
-  HiddenTestCases: z
+  hiddenTestCases: z
     .array(
       z.object({
         input: z.string().min(1, "Input is required"),
@@ -32,11 +32,11 @@ const problemSchema = z.object({
       })
     )
     .min(1, "At least one hidden test case required"),
-  StartCode: z
+  startCode: z
     .array(
       z.object({
         language: z.string().min(1, "Language is required"),
-        code: z.string().min(1, "Code is required"),
+        initialCode: z.string().min(1, "Code is required"), // ✅ changed from code to initialCode
       })
     )
     .length(3, "All three languages required"),
@@ -69,10 +69,10 @@ function Createproblem() {
     defaultValues: {
       difficulty: "easy",
       tags: "array",
-      StartCode: [
-        { language: "C++", code: "" },
-        { language: "Java", code: "" },
-        { language: "JavaScript", code: "" },
+      startCode: [
+        { language: "C++", initialCode: "" },         // ✅ changed from code to initialCode
+        { language: "Java", initialCode: "" },        // ✅ changed from code to initialCode
+        { language: "JavaScript", initialCode: "" },  // ✅ changed from code to initialCode
       ],
       referenceSolution: [
         { language: "C++", completeCode: "" },
@@ -92,7 +92,7 @@ function Createproblem() {
     fields: hiddenFields,
     append: appendHidden,
     remove: removeHidden,
-  } = useFieldArray({ control, name: "HiddenTestCases" });
+  } = useFieldArray({ control, name: "hiddenTestCases" });
 
   const onSubmit = async (data) => {
     try {
@@ -312,8 +312,8 @@ function Createproblem() {
               </button>
             </div>
 
-            {errors.HiddenTestCases?.message && (
-              <p className="text-xs text-red-400 mb-3">{errors.HiddenTestCases.message}</p>
+            {errors.hiddenTestCases?.message && (
+              <p className="text-xs text-red-400 mb-3">{errors.hiddenTestCases.message}</p>
             )}
 
             {hiddenFields.length === 0 && (
@@ -343,29 +343,29 @@ function Createproblem() {
                     <div>
                       <label className="block text-xs font-medium text-zinc-400 mb-1">Input</label>
                       <input
-                        {...register(`HiddenTestCases.${index}.input`)}
+                        {...register(`hiddenTestCases.${index}.input`)}
                         type="text"
                         placeholder="e.g. nums = [3,3], target = 6"
                         className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                          errors.HiddenTestCases?.[index]?.input ? "border-red-500" : "border-zinc-700"
+                          errors.hiddenTestCases?.[index]?.input ? "border-red-500" : "border-zinc-700"
                         }`}
                       />
-                      {errors.HiddenTestCases?.[index]?.input && (
-                        <p className="text-xs text-red-400 mt-1">{errors.HiddenTestCases[index].input.message}</p>
+                      {errors.hiddenTestCases?.[index]?.input && (
+                        <p className="text-xs text-red-400 mt-1">{errors.hiddenTestCases[index].input.message}</p>
                       )}
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-zinc-400 mb-1">Output</label>
                       <input
-                        {...register(`HiddenTestCases.${index}.output`)}
+                        {...register(`hiddenTestCases.${index}.output`)}
                         type="text"
                         placeholder="e.g. [0,1]"
                         className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                          errors.HiddenTestCases?.[index]?.output ? "border-red-500" : "border-zinc-700"
+                          errors.hiddenTestCases?.[index]?.output ? "border-red-500" : "border-zinc-700"
                         }`}
                       />
-                      {errors.HiddenTestCases?.[index]?.output && (
-                        <p className="text-xs text-red-400 mt-1">{errors.HiddenTestCases[index].output.message}</p>
+                      {errors.hiddenTestCases?.[index]?.output && (
+                        <p className="text-xs text-red-400 mt-1">{errors.hiddenTestCases[index].output.message}</p>
                       )}
                     </div>
                   </div>
@@ -373,15 +373,15 @@ function Createproblem() {
                   <div>
                     <label className="block text-xs font-medium text-zinc-400 mb-1">Explanation</label>
                     <textarea
-                      {...register(`HiddenTestCases.${index}.explanation`)}
+                      {...register(`hiddenTestCases.${index}.explanation`)}
                       rows={2}
                       placeholder="Explain why this is the correct output..."
                       className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 resize-y ${
-                        errors.HiddenTestCases?.[index]?.explanation ? "border-red-500" : "border-zinc-700"
+                        errors.hiddenTestCases?.[index]?.explanation ? "border-red-500" : "border-zinc-700"
                       }`}
                     />
-                    {errors.HiddenTestCases?.[index]?.explanation && (
-                      <p className="text-xs text-red-400 mt-1">{errors.HiddenTestCases[index].explanation.message}</p>
+                    {errors.hiddenTestCases?.[index]?.explanation && (
+                      <p className="text-xs text-red-400 mt-1">{errors.hiddenTestCases[index].explanation.message}</p>
                     )}
                   </div>
 
@@ -412,15 +412,15 @@ function Createproblem() {
                         Starter Code
                       </label>
                       <textarea
-                        {...register(`StartCode.${index}.code`)}
+                        {...register(`startCode.${index}.initialCode`)} // ✅ changed from code to initialCode
                         rows={6}
                         placeholder={`// ${lang.label} starter code`}
                         className={`w-full text-xs font-mono bg-transparent outline-none resize-y text-zinc-300 placeholder-zinc-600 ${
-                          errors.StartCode?.[index]?.code ? "border border-red-500 rounded p-1" : ""
+                          errors.StartCode?.[index]?.initialCode ? "border border-red-500 rounded p-1" : ""
                         }`}
                       />
-                      {errors.StartCode?.[index]?.code && (
-                        <p className="text-xs text-red-400 mt-1">{errors.StartCode[index].code.message}</p>
+                      {errors.StartCode?.[index]?.initialCode && (
+                        <p className="text-xs text-red-400 mt-1">{errors.StartCode[index].initialCode.message}</p>
                       )}
                     </div>
 

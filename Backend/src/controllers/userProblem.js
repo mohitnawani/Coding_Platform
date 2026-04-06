@@ -16,16 +16,26 @@ const createProblem = async (req, res) => {
     tags,
     visibleTestCases,
     hiddenTestCases,
+    HiddenTestCases,
     startCode,
+    StartCode,
     referenceSolution,
   } = req.body;
 
+  // normalise field names from frontend to match schema
+  const normalizedVisible = visibleTestCases ?? [];
+  const normalizedHidden  = hiddenTestCases ?? HiddenTestCases ?? [];
+  const normalizedStart   = (startCode ?? StartCode ?? []).map((s) => ({
+    language: s.language,
+    code: s.initialCode ?? s.code ?? "",
+  }));
+
   try {
-    for (const { language, completeCode } of referenceSolution) {
+    for (const { language, completeCode } of referenceSolution ?? []) {
       const languageId = getLanguageById(language);
       // console.log(languageId);
 
-      const submissions = visibleTestCases.map((testcase) => ({
+      const submissions = normalizedVisible.map((testcase) => ({
         source_code: completeCode,
         language_id: languageId,
         stdin: testcase.input,
@@ -51,7 +61,14 @@ const createProblem = async (req, res) => {
     console.log(req.result._id);
 
     const userProblem = await problem.create({
-      ...req.body,
+      title,
+      description,
+      difficulty,
+      tags,
+      visibleTestCases: normalizedVisible,
+      HiddenTestCases: normalizedHidden,
+      StartCode: normalizedStart,
+      referenceSolution,
       problemCreator: req.result._id,
     });
 
