@@ -7,6 +7,7 @@ const authRouter = require('./routes/userAuth');
 const redisClient = require('./config/redis');
 const problemRouter = require('./routes/problemCreator');
 const submitRouter = require('./routes/submit.js');
+const aiRouter = require('./routes/aiChatting');
 const cors = require('cors');
 
 const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
@@ -29,6 +30,8 @@ app.use(cookieParser());
 app.use('/user',authRouter);
 app.use('/problem',problemRouter);
 app.use('/submission',submitRouter);
+app.use('/ai', aiRouter);
+
 
 // app.get('/', (req, res) => {
 //   res.send('Server is running');

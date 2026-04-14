@@ -56,11 +56,19 @@ const Aichat = ({problem}) => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const bubbleStyles = (role) => role === "user"
-        ? "bg-gradient-to-r from-cyan-500/80 to-blue-500/80 text-white rounded-2xl rounded-br-none"
-        : "bg-base-200 text-base-content rounded-2xl rounded-bl-none border border-base-300";
+    const bubbleStyles = (role) =>
+        role === "user"
+            ? "bg-gradient-to-r from-cyan-500/80 to-blue-500/80 text-white"
+            : "bg-base-200 text-base-content";
 
-    const roleLabel = (role) => role === "user" ? "You" : "AI";
+    const roleLabel = (role) => (role === "user" ? "You" : "AI");
+
+    // Preserve newlines and basic spacing for AI output and user messages
+    const renderText = (text) => (
+        <div className="whitespace-pre-wrap leading-relaxed text-sm">
+            {text}
+        </div>
+    );
 
     return (
         <div className="flex flex-col h-screen max-h-[80vh] min-h-[500px]">
@@ -71,13 +79,33 @@ const Aichat = ({problem}) => {
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-base-200/40">
                 {messages.map((msg, index) => (
-                    <div 
-                        key={index} 
+                    <div
+                        key={index}
                         className={`chat ${msg.role === "user" ? "chat-end" : "chat-start"}`}
                     >
-                        <div className="chat-header text-xs mb-1 text-gray-400 px-1">{roleLabel(msg.role)}</div>
+                        <div className="chat-image avatar">
+                            <div className="w-10 rounded-full">
+                                <img
+                                    alt="avatar"
+                                    src={
+                                        msg.role === "user"
+                                            ? "https://img.daisyui.com/images/profile/demo/anakeen@192.webp"
+                                            : "https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div className="chat-header">
+                            {roleLabel(msg.role)}
+                            <time className="text-[11px] opacity-50 ml-1">
+                                {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </time>
+                        </div>
                         <div className={`chat-bubble ${bubbleStyles(msg.role)} shadow-md`}>
-                            {msg.parts[0].text}
+                            {renderText(msg.parts[0].text)}
+                        </div>
+                        <div className="chat-footer opacity-50 text-[11px]">
+                            {msg.role === "user" ? "Delivered" : "Seen"}
                         </div>
                     </div>
                 ))}

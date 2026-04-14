@@ -34,6 +34,8 @@ function ProblemPage() {
   const [submitResult,     setSubmitResult]     = useState(null);
   const [submitStatus,     setSubmitStatus]     = useState(null);
   const [submitMessage,    setSubmitMessage]    = useState('');
+  const [elapsedSeconds,   setElapsedSeconds]   = useState(0);
+  const [timerRunning,     setTimerRunning]     = useState(false);
 
   /* ── fetch problem ── */
   useEffect(() => {
@@ -116,6 +118,13 @@ const submitProblem = async () => {
     })?.initialCode;
     if (starter) setCode(starter);
   }, [selectedLanguage]);
+
+  // stopwatch tick
+  useEffect(() => {
+    if (!timerRunning) return;
+    const id = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [timerRunning]);
 
   function handleEditorDidMount(editor) {
     editorRef.current = editor;
@@ -320,6 +329,26 @@ const submitProblem = async () => {
             <div className="flex-1" />
 
             {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 bg-[#21262d] text-gray-200 text-xs border border-[#30363d] rounded-lg px-3 py-1.5 shadow-sm shadow-[#30363d]/20">
+                <span className="font-mono">
+                  {new Date(elapsedSeconds * 1000).toISOString().substr(14, 5)}
+                </span>
+                <button
+                  onClick={() => setTimerRunning((r) => !r)}
+                  className="px-2 py-0.5 rounded bg-[#30363d] hover:bg-[#3a3f47] transition text-[11px]"
+                >
+                  {timerRunning ? 'Pause' : 'Start'}
+                </button>
+                <button
+                  onClick={() => { setElapsedSeconds(0); setTimerRunning(false); }}
+                  className="px-2 py-0.5 rounded hover:bg-[#30363d] transition text-[11px]"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={runProblem}
               className="flex items-center gap-2 px-4 py-1.5 bg-[#21262d] hover:bg-[#30363d] text-gray-300 hover:text-white text-xs font-semibold rounded-lg border border-[#30363d] transition-all cursor-pointer shadow-sm shadow-[#30363d]/20"

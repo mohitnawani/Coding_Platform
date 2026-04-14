@@ -9,7 +9,7 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 flex items-center justify-between px-8 h-14 bg-[#0d1117]/90 border-b border-gray-700/50 backdrop-blur-md">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight no-underline">
-          <div className="w-7 h-7 rounded-md bg-orange-400 flex items-center justify-center text-gray-900 text-xs font-black">
+          <div className="w-7 h-7 rounded-md bg-white flex items-center justify-center text-gray-900 text-xs font-black">
             C
           </div>
           <span className="text-white">Coder</span>
@@ -45,7 +45,7 @@ export default function Navbar() {
           </NavLink>
           <NavLink
             to="/signup"
-            className="px-4 py-1.5 rounded-lg text-sm font-bold text-gray-900 bg-orange-400 hover:bg-orange-300 transition-all no-underline"
+            className="px-4 py-1.5 rounded-lg text-sm font-bold text-gray-900 bg-white hover:bg-gray-200 transition-all no-underline"
           >
             Sign Up
           </NavLink>

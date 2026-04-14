@@ -16,10 +16,12 @@ import Discuss from "./pages/Navbar/Discuss";
 import Contest from "./pages/Navbar/Contest";
 import LeaderBoard from "./pages/Navbar/LeaderBoard";
 import Problems from "./pages/Navbar/Problems";
-
+import Updateproblem_page from "./pages/Updateproblem_page";
 
 function App() {
   const { isAuthenticated, user, loading } = useSelector((state) => state.auth);
+
+  // console.log("User in App.jsx:", user);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -32,89 +34,40 @@ function App() {
     didCheckAuth.current = true;
     dispatch(checkAuth()).finally(() => setBootstrapped(true));
   }, [dispatch]);
-  
+
   if (!bootstrapped || loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <span className="loading loading-spinner loading-lg"></span>
-    </div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   return (
     <Routes>
+      <Route path='/admin' element={isAuthenticated ? (isAdmin ? <AdminPanel /> : <Navigate to="/" />) : <Navigate to="/login" />} />
+      <Route path='/' element={isAuthenticated ? (isAdmin ? <AdminPanel /> : <Homepage />) : <LandingPage />} />
+      <Route path='/login' element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+      <Route path='/signup' element={!isAuthenticated ? <Signup /> : <Navigate to="/" />} />
+      <Route path='/admin/create' element={isAuthenticated && isAdmin ? <Createproblem /> : <Navigate to="/" />} />
+      <Route path='/admin/delete' element={isAuthenticated && isAdmin ? <Deleteproblem /> : <Navigate to="/" />} />
+      <Route path='/admin/update' element={isAuthenticated && isAdmin ? <Updateproblem /> : <Navigate to="/" />} />
 
-      {/* Public Landing */}
-      <Route path="/" element={<LandingPage />} />
+      <Route path='/admin/update/:id' element={isAuthenticated && isAdmin ? <Updateproblem_page /> : <Navigate to="/" />} />
+      <Route path='/problem/:id' element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
 
-      {/* Authenticated home (former landing target) */}
-      <Route
-        path="/home"
-        element={
-          isAuthenticated
-            ? (isAdmin ? <Navigate to="/admin" /> : <Homepage />)
-            : <Navigate to="/login" />
-        }
-      />
+      
 
-      {/* Login */}
-      <Route
-        path="/login"
-        element={
-          !isAuthenticated
-            ? <Login />
-            : isAdmin
-              ? <Navigate to="/admin" />
-              : <Navigate to="/home" />
-        }
-      />
 
-      {/* Signup */}
-      <Route
-        path="/signup"
-        element={
-          !isAuthenticated
-            ? <Signup />
-            : <Navigate to="/home" />
-        }
-      />
-
-      {/* Admin Routes */}
-      <Route path="/admin"         element={isAuthenticated && isAdmin ? <AdminPanel />     : <Navigate to="/login" />} />
-      <Route path="/admin/create"  element={isAuthenticated && isAdmin ? <Createproblem />  : <Navigate to="/login" />} />
-      <Route path="/admin/delete"  element={isAuthenticated && isAdmin ? <Deleteproblem />  : <Navigate to="/login" />} />
-      <Route path="/admin/update"  element={isAuthenticated && isAdmin ? <Updateproblem />  : <Navigate to="/login" />} />
-
-      {/* User Routes */}
-      <Route path="/problem/:id" element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
-
-      {/* Navbar routes are here but not implemented yet */}
+      {/* Navbar routes */}
       <Route path="/explore" element={<Explore />} />
       <Route path="/discuss" element={<Discuss />} />
       <Route path="/contest" element={<Contest />} />
       <Route path="/leaderboard" element={<LeaderBoard />} />
-      <Route path="/problems" element={<Problems />} />  
-
-
+      <Route path="/problems" element={<Problems />} />
     </Routes>
   );
 }
 
 export default App;
 
-
-// import { Router, Route } from "react-router"
-// import {Homepage} from "./pages/Homepage"
-// import {Login} from "./pages/Login"
-// import {Signup} from "./pages/Signup"
-
-// function App()
-// {
-//   return(
-//     <Router>
-//       <Route path="./" element={<Homepage></Homepage>}></Route>
-//       <Route path="./Login" element={<Login></Login>}></Route>   
-//       <Route path="./Signup" element={<Signup></Signup>}></Route>           
-//     </Router>
-//   )
-// }
-
-// export default App

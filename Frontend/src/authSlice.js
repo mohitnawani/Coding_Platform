@@ -1,6 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosClient from './utils/axiosClient'
 
+const normalizeUser = (data) => {
+  const user = data?.user || data || null;
+  if (!user) return null;
+  const role = user.role || data?.role || 'user';
+  return { ...user, role };
+};
+
 const getErrorMessage = (error, fallback) => {
   const data = error?.response?.data;
   if (typeof data === 'string' && data.trim()) return data;
@@ -13,7 +20,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
     const response =  await axiosClient.post('/user/register', userData);
-    return response.data.user;
+    return normalizeUser(response.data);
     } catch (error) {
       return rejectWithValue(getErrorMessage(error, 'Registration failed'));
     }
@@ -26,7 +33,8 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axiosClient.post('/user/login', credentials);
-      return response.data.user;
+      console.log("Login response:", response.data);
+      return normalizeUser(response.data);
     } catch (error) {
       return rejectWithValue(getErrorMessage(error, 'Login failed'));
     }
@@ -38,7 +46,7 @@ export const checkAuth = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axiosClient.get('/user/check');
-      return data.user;
+      return normalizeUser(data);
     } catch (error) {
       if (error?.response?.status === 401) return null;
       return rejectWithValue(getErrorMessage(error, 'Auth check failed'));
@@ -96,6 +104,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = !!action.payload;
         state.user = action.payload;
+        console.log("User in loginUser.fulfilled:", action.payload);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

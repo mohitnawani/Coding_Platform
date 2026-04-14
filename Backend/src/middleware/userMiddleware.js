@@ -4,7 +4,7 @@ const jwt =require("jsonwebtoken");
 
 const userMiddleware= async(req,res,next)=>{
     try{
-        console.log("User middleware called");
+        // console.log("User middleware called");
         const {token}=req.cookies;
         if(!token){
             throw new Error("Token is not present");

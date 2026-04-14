@@ -72,8 +72,9 @@ const login = async (req, res) => {
       _id:user._id,
       role:user.role
     }
-    console.log("user from DB:", user); // ← check if role exists here
-    console.log("role value:", user.role); // ← is it undefined?
+    // console.log("user from DB:", user); // ← check if role exists here
+    // console.log("role value:", user.role); // ← is it undefined?
+    console.log(reply);
     
     res.status(200).json({
       user:reply,

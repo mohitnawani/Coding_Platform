@@ -144,7 +144,7 @@ const deletedProblem = async (req, res) => {
     const Deleted_Id = await problem.findByIdAndDelete(id);
     if (!Deleted_Id) return res.status(404).send("problem is not present");
 
-    res.status(200).send("Problem is deleted SucessFully");
+    res.status(200).send("Problem is deleted SucessFully", Deleted_Id);
   } catch (err) {
     res.status(500).send("Error: " + err);
   }

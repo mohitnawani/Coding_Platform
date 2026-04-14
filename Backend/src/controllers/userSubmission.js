@@ -69,33 +69,41 @@ const submitCode = async (req, res) => {
       let memory = 0;
       let status = "accepted";
       let errorMessage = null;
+      let failingCase = null;
 
-      for (const test of testResult) {
-        // Status IDs: 3 = Accepted, 4 = Compilation Error, 5 = Runtime Error, 6 = Wrong Answer
+      testResult.forEach((test, idx) => {
         if (test.status_id === 3) {
           testCasesPassed++;
           runtime += parseFloat(test.time || 0);
           memory = Math.max(memory, test.memory || 0);
-        } else if (test.status_id === 4) {
+          return;
+        }
+
+        if (test.status_id === 4) {
           status = "compilation_error";
           errorMessage = test.compile_output || "Compilation failed";
-          break; // Stop on first error
         } else if (test.status_id === 5) {
           status = "runtime_error";
           errorMessage = test.stderr || "Runtime error occurred";
-          break;
         } else {
           status = "wrong_answer";
           errorMessage = `Test case ${testCasesPassed + 1} failed`;
-          break;
         }
-      }
+
+        failingCase = {
+          index: idx + 1,
+          status_id: test.status_id,
+          stdout: test.stdout,
+          stderr: test.stderr,
+          compile_output: test.compile_output
+        };
+      });
 
       submittedResult.status = status;
       submittedResult.testCasesPassed = testCasesPassed;
       submittedResult.testCasesTotal = testResult.length;
       submittedResult.errorMessage = errorMessage;
-      submittedResult.runtime = (runtime / testCasesPassed) || 0; // Average runtime
+      submittedResult.runtime = (testCasesPassed ? runtime / testCasesPassed : 0);
       submittedResult.memory = memory;
       await submittedResult.save();
 
@@ -105,7 +113,15 @@ const submitCode = async (req, res) => {
         await req.result.save();
       }
 
-      return res.status(200).json(submittedResult);
+      return res.status(200).json({
+        status,
+        message: status === "accepted" ? "All test cases passed" : errorMessage || "Tests failed",
+        passed: testCasesPassed,
+        total: testResult.length,
+        failingCase,
+        results: testResult,
+        submission: submittedResult,
+      });
 
     } catch (testError) {
       // Update submission with error
@@ -162,30 +178,46 @@ const runCode = async (req, res) => {
       const resultToken = submitResult.map((value) => value.token);
       const testResult = await submitToken(resultToken);
 
-      // Check for errors
-      for (const test of testResult) {
-        if (test.status_id === 4) {
-          return res.status(400).json({
-            error: "Compilation Error",
-            message: test.compile_output || test.stderr,
-            results: testResult
-          });
-        } else if (test.status_id === 5) {
-          return res.status(400).json({
-            error: "Runtime Error",
-            message: test.stderr || "Runtime error occurred",
-            results: testResult
-          });
-        } else if (test.status_id !== 3) {
-          return res.status(400).json({
-            error: "Test Failed",
-            message: "One or more test cases failed",
-            results: testResult
-          });
-        }
-      }
+      let passed = 0;
+      let status = "accepted";
+      let message = "All visible test cases passed";
+      let failingCase = null;
 
-      return res.status(200).json(testResult);
+      testResult.forEach((test, idx) => {
+        if (test.status_id === 3) {
+          passed++;
+          return;
+        }
+
+        // non-accepted statuses
+        if (test.status_id === 4) {
+          status = "compilation_error";
+          message = test.compile_output || test.stderr || "Compilation error";
+        } else if (test.status_id === 5) {
+          status = "runtime_error";
+          message = test.stderr || "Runtime error";
+        } else {
+          status = "wrong_answer";
+          message = "One or more test cases failed";
+        }
+        failingCase = {
+          index: idx + 1,
+          status_id: test.status_id,
+          stdout: test.stdout,
+          stderr: test.stderr,
+          compile_output: test.compile_output
+        };
+      });
+
+      return res.status(200).json({
+        status,
+        message,
+        passed,
+        total: testResult.length,
+        failingCase,
+        results: testResult
+      });
+
 
     } catch (testError) {
       console.error("Run Code Error:", testError);
