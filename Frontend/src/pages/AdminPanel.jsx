@@ -102,6 +102,22 @@ export default function AdminDashboard() {
               <span className="text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
             </div>
           </button>
+
+          <button
+            onClick={() => navigate('/admin/upload-videos')}
+            className="w-full bg-[#0f172a] border border-gray-800 rounded-xl p-6 text-left hover:border-gray-600 hover:-translate-y-0.5 transition-all group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-white/10 border border-gray-700 flex items-center justify-center shrink-0">
+                <span className="text-white text-xl font-light">📹</span>
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-white mb-0.5">Upload videos</div>
+                <div className="text-xs text-gray-400">Add new tutorial videos in bulk via CSV or JSON files</div>
+              </div>
+              <span className="text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
+            </div>
+          </button>
         </div>
 
         {/* Info Cards */}

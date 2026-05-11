@@ -5,6 +5,7 @@ import axiosClient from "../utils/axiosClient";
 import runcode from '../utils/runcode';
 import submitcode from '../utils/submitcode';
 import Aichat from '../components/Aichat';
+import ReactPlayer from 'react-player'
 
 const LANGUAGES = [
   { label: 'JavaScript', value: 'javascript', key: 'Javascript' },
@@ -171,7 +172,7 @@ const submitProblem = async () => {
 
           {/* Left Tabs */}
           <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0">
-            {['description', 'testcases', 'solutions', 'ai'].map(tab => (
+            {['description', 'testcases', 'solutions', 'ai', 'editorial'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveLeftTab(tab)}
@@ -302,6 +303,12 @@ const submitProblem = async () => {
             {
               activeLeftTab==='ai' && (
                 <Aichat problem={problem}></Aichat>
+              )
+            }
+            {/*editorial*/}
+            {
+              activeLeftTab==='editorial' && (  
+              <ReactPlayer src='https://youtu.be/zHTjc-lszXI?si=uJKpvYsqWzKemuV1' />
               )
             }
 

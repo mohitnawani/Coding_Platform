@@ -8,6 +8,7 @@ const redisClient = require('./config/redis');
 const problemRouter = require('./routes/problemCreator');
 const submitRouter = require('./routes/submit.js');
 const aiRouter = require('./routes/aiChatting');
+const videosSection = require('./routes/videoSection');
 const cors = require('cors');
 
 const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
@@ -31,6 +32,7 @@ app.use('/user',authRouter);
 app.use('/problem',problemRouter);
 app.use('/submission',submitRouter);
 app.use('/ai', aiRouter);
+app.use('/uploads', videosSection);
 
 
 // app.get('/', (req, res) => {

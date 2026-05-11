@@ -17,6 +17,8 @@ import Contest from "./pages/Navbar/Contest";
 import LeaderBoard from "./pages/Navbar/LeaderBoard";
 import Problems from "./pages/Navbar/Problems";
 import Updateproblem_page from "./pages/Updateproblem_page";
+import AdminVideos from "./pages/AdminVideos ";
+import AdminUpload from "./pages/AdminUpload";
 
 function App() {
   const { isAuthenticated, user, loading } = useSelector((state) => state.auth);
@@ -54,6 +56,9 @@ function App() {
       <Route path='/admin/update' element={isAuthenticated && isAdmin ? <Updateproblem /> : <Navigate to="/" />} />
 
       <Route path='/admin/update/:id' element={isAuthenticated && isAdmin ? <Updateproblem_page /> : <Navigate to="/" />} />
+
+      <Route path='/admin/upload-videos' element={isAuthenticated && isAdmin ? <AdminVideos /> : <Navigate to="/" />} />
+      <Route path='/admin/upload/:problemId' element={isAuthenticated && isAdmin ? <AdminUpload /> : <Navigate to="/" />} />  
       <Route path='/problem/:id' element={isAuthenticated ? <ProblemPage /> : <Navigate to="/login" />} />
 
       
