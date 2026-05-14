@@ -6,6 +6,7 @@ import runcode from '../utils/runcode';
 import submitcode from '../utils/submitcode';
 import Aichat from '../components/Aichat';
 import ReactPlayer from 'react-player'
+import PlayerComponent from '../components/PlayerComponent';
 
 const LANGUAGES = [
   { label: 'JavaScript', value: 'javascript', key: 'Javascript' },
@@ -307,8 +308,8 @@ const submitProblem = async () => {
             }
             {/*editorial*/}
             {
-              activeLeftTab==='editorial' && (  
-              <ReactPlayer src='https://youtu.be/zHTjc-lszXI?si=uJKpvYsqWzKemuV1' />
+              activeLeftTab==='editorial' && (
+                <PlayerComponent secureUrl={problem.secureUrl} thumbnailUrl={problem.thumbnailUrl} duration={problem.duration}></PlayerComponent>
               )
             }
 

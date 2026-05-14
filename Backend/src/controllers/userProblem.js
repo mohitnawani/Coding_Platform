@@ -1,5 +1,6 @@
 const problem = require("../models/problem");
 const User = require("../models/user");
+const SolutionVideo = require("../models/solutionVideo");
 
 const {
   getLanguageById,
@@ -157,26 +158,27 @@ const getProblemById = async (req, res) => {
 
     const foundProblem = await problem.findById(id);
     if (!foundProblem) return res.status(404).json({ message: "Problem not found" });
+    const video = await SolutionVideo.findOne({ problemId: id }).lean();
+    console.log("Video found for problem:", video);
 
-    res.status(200).json({
-      problem: {
-        _id:               foundProblem._id,
-        title:             foundProblem.title,
-        description:       foundProblem.description,
-        difficulty:        foundProblem.difficulty,
-        tags:              foundProblem.tags,
-        visibleTestCases:  foundProblem.visibleTestCases,
-        HiddenTestCases:   foundProblem.HiddenTestCases,
-        ProblemCreator:    foundProblem.ProblemCreator,
-        referenceSolution: foundProblem.referenceSolution,
-        StartCode:         foundProblem.StartCode,
-      }
-    });
+    const responseData = {
+      ...foundProblem.toObject(),
+      ...(video
+        ? {
+            secureUrl: video.secureUrl,
+            thumbnailUrl: video.thumbnailUrl,
+            duration: video.duration,
+          }
+        : {}),
+    };
 
-  } catch (err) {
+    console.log("Response Data:", responseData);
+    return res.status(200).send(responseData);
+
+  }catch (err) {
     res.status(500).json({ message: "Error: " + err.message });
   }
-};
+}
 
 const getAllProblem = async (req,res)=>{
   try{
