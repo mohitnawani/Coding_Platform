@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { loginUser } from '../authSlice';
 import { useEffect } from 'react';
+import LoginComponent from '../components/Googlelogin';
 
 const signupSchema = z.object({
   emailId: z.string().email('Invalid Email'),
@@ -85,7 +86,9 @@ function Login() {
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
+
         </form>
+        <LoginComponent />
 
         <p className="mt-6 text-center text-sm text-gray-400">
           New here?{' '}

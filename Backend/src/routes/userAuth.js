@@ -4,6 +4,7 @@ const User = require('../models/user');
 const {register, login, logout, adminRegister, deleteUser} = require('../controllers/userAuthent');
 const userMiddleware = require('../middleware/userMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
+const {googleLogin} = require('../controllers/authController');
 
 //Registar
 //login
@@ -13,23 +14,17 @@ authRouter.post('/register',register)
 authRouter.post('/login',login)
 authRouter.post('/logout',userMiddleware,logout)
 authRouter.post('/admin/register',adminMiddleware,adminRegister);
-authRouter.post('/deletedUser', userMiddleware,deleteUser)
-authRouter.get('/check',userMiddleware,(req,res)=>{
+authRouter.post('/deletedUser', userMiddleware,deleteUser);
 
-    const reply={
-        firstName: req.result.firstName,
-        emailId:req.result.emailId,
-        _id:req.result._id,
-        role:req.result.role
-    }
+// Public Routes
+authRouter.post('/google-login', googleLogin);
 
-    res.status(200).json(
-        {
-            user:reply,
-            message:"valid user"
-        }
-    );
-})
+// Protected check route
+authRouter.get('/check', userMiddleware, (req, res) => {
+  return res.status(200).json({
+    user: req.user || null,
+    message: 'valid user'
+  });
+});
 
-
-module.exports=authRouter;
+module.exports = authRouter;

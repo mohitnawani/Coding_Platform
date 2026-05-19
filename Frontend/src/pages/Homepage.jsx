@@ -15,6 +15,7 @@ function Homepage() {
   const [showLogout, setShowLogout] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  console.log("User in Homepage.jsx:", user);
   const [Problems, setProblems] = useState([]);
   const [solvedProblems, setSolvedProblems] = useState([]);
   const [filters, setFilters] = useState({ difficulty: 'all', tag: 'all', status: 'all' });
@@ -62,15 +63,14 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
       {/* NAVBAR */}
       <nav className="flex items-center justify-between px-8 h-14 bg-[#0d1117] border-b border-gray-700/50 sticky top-0 z-10 backdrop-blur-sm">
         <a href="/" className="text-xl font-bold tracking-tight">
-          <span className="text-orange-400">Leet</span>
-          <span className="text-white">Code</span>
+          <span className="text-orange-400">Coder</span>
         </a>
         <button
           onClick={() => setShowLogout(true)}
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
         >
           <div className="w-8 h-8 rounded-full bg-orange-400 text-gray-900 font-bold flex items-center justify-center text-sm">
-            {user.firstName.charAt(0).toUpperCase()}
+            {user.firstName?.charAt(0)?.toUpperCase()}
           </div>
           <span className="text-sm">{user.firstName}</span>
         </button>

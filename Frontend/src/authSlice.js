@@ -2,10 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosClient from './utils/axiosClient'
 
 const normalizeUser = (data) => {
-  const user = data?.user || data || null;
+  console.log("Normalizing user data:", data);
+  const user = data?.user || data;
   if (!user) return null;
-  const role = user.role || data?.role || 'user';
-  return { ...user, role };
+  return { ...user, role: user.role || 'user' };
 };
 
 const getErrorMessage = (error, fallback) => {
@@ -14,7 +14,18 @@ const getErrorMessage = (error, fallback) => {
   if (data?.message) return data.message;
   return fallback;
 };
-
+export const googleLogin = createAsyncThunk(
+  'auth/googleLogin',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await axiosClient.post('/api/auth/google-login', { token });
+      console.log("Google login response:", response.data);
+      return normalizeUser(response.data);
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error, 'Google login failed'));
+    }
+  }
+);
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
@@ -78,6 +89,25 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = !!action.payload;
+        state.user = action.payload;
+        console.log("User in googleLogin.fulfilled:", action.payload);
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message || 'Google login failed';
+        state.isAuthenticated = false;
+        state.user = null;
+      })
+
+
       // Register User Cases
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
@@ -95,6 +125,7 @@ const authSlice = createSlice({
         state.user = null;
       })
   
+
       // Login User Cases
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -113,6 +144,7 @@ const authSlice = createSlice({
         state.user = null;
       })
   
+
       // Check Auth Cases
       .addCase(checkAuth.pending, (state) => {
         state.loading = true;
@@ -130,6 +162,7 @@ const authSlice = createSlice({
         state.user = null;
       })
   
+      
       // Logout User Cases
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;

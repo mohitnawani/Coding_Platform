@@ -155,7 +155,7 @@ const submitProblem = async () => {
 
       {/* ── Top Bar ── */}
       <header className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-6 gap-6 shrink-0">
-        <span className="text-cyan-400 font-bold tracking-widest text-sm">⟨/⟩ CODELAB</span>
+        <span className="text-cyan-400 font-bold tracking-widest text-sm">⟨/⟩ Coder</span>
         <div className="flex-1" />
         <span className={`text-xs px-3 py-1 rounded-full font-semibold capitalize ${DIFFICULTY_STYLE[problem.difficulty] ?? DIFFICULTY_STYLE.easy}`}>
           {problem.difficulty}
