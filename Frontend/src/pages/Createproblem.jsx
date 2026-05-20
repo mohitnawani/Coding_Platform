@@ -6,48 +6,72 @@ import { useNavigate } from "react-router";
 
 const problemSchema = z.object({
   title: z.string().min(1, "Title is required"),
+
   description: z.string().min(1, "Description is required"),
+
   difficulty: z.enum(["easy", "medium", "hard"]),
+
   tags: z.enum([
-    "array", "linkedList", "graph", "dp", "math", "tree",
-    "stack", "queue", "string", "sorting", "searching", "greedy",
-    "bitManipulation", "recursion", "design", "heap", "hashTable",
-    "slidingWindow", "twoPointers", "unionFind", "backtracking"
+    "array",
+    "linkedList",
+    "graph",
+    "dp",
+    "math",
+    "tree",
+    "stack",
+    "queue",
+    "string",
+    "sorting",
+    "searching",
+    "greedy",
+    "bitManipulation",
+    "recursion",
+    "design",
+    "heap",
+    "hashTable",
+    "slidingWindow",
+    "twoPointers",
+    "unionFind",
+    "backtracking",
   ]),
+
   visibleTestCases: z
     .array(
       z.object({
-        input: z.string().min(1, "Input is required"),
-        output: z.string().min(1, "Output is required"),
-        explanation: z.string().min(1, "Explanation is required"),
+        input: z.string().min(1, "Input required"),
+        output: z.string().min(1, "Output required"),
+        explanation: z.string().min(1, "Explanation required"),
       })
     )
     .min(1, "At least one visible test case required"),
-  hiddenTestCases: z
+
+  HiddenTestCases: z
     .array(
       z.object({
-        input: z.string().min(1, "Input is required"),
-        output: z.string().min(1, "Output is required"),
-        explanation: z.string().min(1, "Explanation is required"),
+        input: z.string().min(1, "Input required"),
+        output: z.string().min(1, "Output required"),
+        explanation: z.string().min(1, "Explanation required"),
       })
     )
     .min(1, "At least one hidden test case required"),
+
   startCode: z
     .array(
       z.object({
-        language: z.string().min(1, "Language is required"),
-        initialCode: z.string().min(1, "Code is required"), // ✅ changed from code to initialCode
+        language: z.string(),
+        initialCode: z.string().min(1, "Starter code required"),
       })
     )
-    .length(3, "All three languages required"),
+    .length(3),
+
   referenceSolution: z
     .array(
       z.object({
         language: z.enum(["C++", "Java", "JavaScript"]),
-        completeCode: z.string().min(1, "Complete code is required"),
+        completeCode: z.string().min(1, "Solution required"),
       })
     )
-    .length(3, "All three languages required"),
+    .length(3),
 });
 
 const LANGUAGES = [
@@ -66,18 +90,57 @@ function Createproblem() {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(problemSchema),
+
     defaultValues: {
+      title: "",
+      description: "",
       difficulty: "easy",
       tags: "array",
-      startCode: [
-        { language: "C++", initialCode: "" },         // ✅ changed from code to initialCode
-        { language: "Java", initialCode: "" },        // ✅ changed from code to initialCode
-        { language: "JavaScript", initialCode: "" },  // ✅ changed from code to initialCode
+
+      visibleTestCases: [
+        {
+          input: "",
+          output: "",
+          explanation: "",
+        },
       ],
+
+      HiddenTestCases: [
+        {
+          input: "",
+          output: "",
+          explanation: "",
+        },
+      ],
+
+      startCode: [
+        {
+          language: "C++",
+          initialCode: "",
+        },
+        {
+          language: "Java",
+          initialCode: "",
+        },
+        {
+          language: "JavaScript",
+          initialCode: "",
+        },
+      ],
+
       referenceSolution: [
-        { language: "C++", completeCode: "" },
-        { language: "Java", completeCode: "" },
-        { language: "JavaScript", completeCode: "" },
+        {
+          language: "C++",
+          completeCode: "",
+        },
+        {
+          language: "Java",
+          completeCode: "",
+        },
+        {
+          language: "JavaScript",
+          completeCode: "",
+        },
       ],
     },
   });
@@ -86,115 +149,129 @@ function Createproblem() {
     fields: visibleFields,
     append: appendVisible,
     remove: removeVisible,
-  } = useFieldArray({ control, name: "visibleTestCases" });
+  } = useFieldArray({
+    control,
+    name: "visibleTestCases",
+  });
 
   const {
     fields: hiddenFields,
     append: appendHidden,
     remove: removeHidden,
-  } = useFieldArray({ control, name: "hiddenTestCases" });
+  } = useFieldArray({
+    control,
+    name: "HiddenTestCases",
+  });
 
   const onSubmit = async (data) => {
     try {
-      console.log("Submitting problem:", data);
-      await axiosClient.post("/problem/create", data);
-      alert("Problem created successfully!");
+      console.log("FINAL DATA:", data);
+
+      const response = await axiosClient.post(
+        "/problem/create",
+        data
+      );
+
+      console.log(response.data);
+
+      alert("Problem Created Successfully");
+
       navigate("/");
     } catch (error) {
-      alert(`Error: ${error.response?.data?.message || error.message}`);
+      console.log(error);
+
+      alert(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 relative overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
+    <div className="min-h-screen bg-[#0b0f1a] text-white py-10">
+      <div className="w-[80%] mx-auto">
 
-      <div className="w-[80%] mx-auto relative z-10 py-10">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">
+            Create Problem
+          </h1>
 
-        {/* Page Header */}
-        <div className="flex items-center justify-between mb-8">
-        <div>
-          <p className="font-bold text-3xl font-sans text-white">
-            Create New Problem
-          </p>
-          <p className="text-zinc-500 mt-1">Fill in all sections to publish a coding challenge</p>
-          
-        </div>
-        <button
-            onClick={() => navigate('/admin')}
-            className="px-4 py-2 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-200 transition shadow-md shadow-black/20"
+          <button
+            onClick={() => navigate("/admin")}
+            className="px-4 py-2 bg-white text-black rounded-lg"
           >
-            Back to Admin
-        </button>
-
+            Back
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-8"
+        >
 
-          {/* ── Basic Information ── */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">
-              Basic Information
-            </p>
+          {/* BASIC INFO */}
 
-            {/* Title */}
-            <div className="pt-1">
-              <label className="block text-sm font-medium text-white mb-1">Title</label>
+          <div className="bg-zinc-900 p-6 rounded-xl space-y-4">
+
+            <div>
+              <label className="block mb-2">
+                Title
+              </label>
+
               <input
                 {...register("title")}
-                type="text"
-                placeholder="e.g. Two Sum"
-                className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                  errors.title ? "border-red-500 bg-red-950" : "border-zinc-700"
-                }`}
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3"
               />
-              {errors.title && <p className="text-xs text-red-400 mt-1">{errors.title.message}</p>}
+
+              {errors.title && (
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.title.message}
+                </p>
+              )}
             </div>
 
-            {/* Description */}
-            <div className="pt-3">
-              <label className="block text-sm font-medium text-white mb-1">Description</label>
+            <div>
+              <label className="block mb-2">
+                Description
+              </label>
+
               <textarea
+                rows={5}
                 {...register("description")}
-                placeholder="Describe the problem, constraints, and examples..."
-                className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 resize-y h-24 ${
-                  errors.description ? "border-red-500 bg-red-950" : "border-zinc-700"
-                }`}
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3"
               />
-              {errors.description && <p className="text-xs text-red-400 mt-1">{errors.description.message}</p>}
+
+              {errors.description && (
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
 
-            {/* Difficulty + Tag */}
-            <div className="grid grid-cols-2 gap-4 pt-3">
+            <div className="grid grid-cols-2 gap-4">
+
               <div>
-                <label className="block text-sm font-medium text-white mb-1">Difficulty</label>
+                <label className="block mb-2">
+                  Difficulty
+                </label>
+
                 <select
                   {...register("difficulty")}
-                  className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 focus:ring-2 focus:ring-zinc-500 ${
-                    errors.difficulty ? "border-red-500" : "border-zinc-700"
-                  }`}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3"
                 >
                   <option value="easy">Easy</option>
                   <option value="medium">Medium</option>
                   <option value="hard">Hard</option>
                 </select>
-                {errors.difficulty && <p className="text-xs text-red-400 mt-1">{errors.difficulty.message}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-1">Tag</label>
+                <label className="block mb-2">
+                  Tag
+                </label>
+
                 <select
                   {...register("tags")}
-                  className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 focus:ring-2 focus:ring-zinc-500 ${
-                    errors.tags ? "border-red-500" : "border-zinc-700"
-                  }`}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3"
                 >
                   <option value="array">Array</option>
                   <option value="linkedList">Linked List</option>
@@ -218,271 +295,238 @@ function Createproblem() {
                   <option value="unionFind">Union Find</option>
                   <option value="backtracking">Backtracking</option>
                 </select>
-                {errors.tags && <p className="text-xs text-red-400 mt-1">{errors.tags.message}</p>}
               </div>
+
             </div>
           </div>
 
-          {/* ── Visible Test Cases ── */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+          {/* VISIBLE TEST CASES */}
+
+          <div className="bg-zinc-900 p-6 rounded-xl">
+
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-2xl font-semibold">
                 Visible Test Cases
               </h2>
+
               <button
                 type="button"
-                onClick={() => appendVisible({ input: "", output: "", explanation: "" })}
-                className="text-sm border border-zinc-700 rounded-lg px-3 py-1.5 text-zinc-300 hover:bg-zinc-800"
+                onClick={() =>
+                  appendVisible({
+                    input: "",
+                    output: "",
+                    explanation: "",
+                  })
+                }
+                className="bg-white text-black px-3 py-2 rounded-lg"
               >
-                + Add Case
+                Add Case
               </button>
             </div>
 
-            {errors.visibleTestCases?.message && (
-              <p className="text-xs text-red-400 mb-3">{errors.visibleTestCases.message}</p>
-            )}
+            <div className="space-y-4">
 
-            {visibleFields.length === 0 && (
-              <div className="border border-dashed border-zinc-700 rounded-lg p-6 text-center text-sm text-zinc-600">
-                No visible test cases yet. Add at least one.
-              </div>
-            )}
-
-            <div className="space-y-3">
               {visibleFields.map((field, index) => (
-                <div key={field.id} className="border border-zinc-700 rounded-lg p-4 space-y-3 bg-zinc-800/40">
+                <div
+                  key={field.id}
+                  className="border border-zinc-700 p-4 rounded-lg space-y-3"
+                >
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                      Case {index + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeVisible(index)}
-                      className="text-xs text-red-400 border border-red-900 rounded px-2 py-1 hover:bg-red-950"
-                    >
-                      Remove
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400 mb-1">Input</label>
-                      <input
-                        {...register(`visibleTestCases.${index}.input`)}
-                        type="text"
-                        placeholder="e.g. nums = [2,7,11], target = 9"
-                        className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                          errors.visibleTestCases?.[index]?.input ? "border-red-500" : "border-zinc-700"
-                        }`}
-                      />
-                      {errors.visibleTestCases?.[index]?.input && (
-                        <p className="text-xs text-red-400 mt-1">{errors.visibleTestCases[index].input.message}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400 mb-1">Output</label>
-                      <input
-                        {...register(`visibleTestCases.${index}.output`)}
-                        type="text"
-                        placeholder="e.g. [0,1]"
-                        className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                          errors.visibleTestCases?.[index]?.output ? "border-red-500" : "border-zinc-700"
-                        }`}
-                      />
-                      {errors.visibleTestCases?.[index]?.output && (
-                        <p className="text-xs text-red-400 mt-1">{errors.visibleTestCases[index].output.message}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">Explanation</label>
-                    <textarea
-                      {...register(`visibleTestCases.${index}.explanation`)}
-                      rows={2}
-                      placeholder="Explain why this is the correct output..."
-                      className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 resize-y ${
-                        errors.visibleTestCases?.[index]?.explanation ? "border-red-500" : "border-zinc-700"
-                      }`}
-                    />
-                    {errors.visibleTestCases?.[index]?.explanation && (
-                      <p className="text-xs text-red-400 mt-1">{errors.visibleTestCases[index].explanation.message}</p>
+                  <input
+                    {...register(
+                      `visibleTestCases.${index}.input`
                     )}
-                  </div>
+                    placeholder="Input"
+                    className="w-full bg-zinc-800 p-3 rounded-lg"
+                  />
+
+                  <input
+                    {...register(
+                      `visibleTestCases.${index}.output`
+                    )}
+                    placeholder="Output"
+                    className="w-full bg-zinc-800 p-3 rounded-lg"
+                  />
+
+                  <textarea
+                    {...register(
+                      `visibleTestCases.${index}.explanation`
+                    )}
+                    placeholder="Explanation"
+                    className="w-full bg-zinc-800 p-3 rounded-lg"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeVisible(index)}
+                    className="bg-red-500 px-3 py-2 rounded-lg"
+                  >
+                    Remove
+                  </button>
 
                 </div>
               ))}
+
             </div>
           </div>
 
-          {/* ── Hidden Test Cases ── */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+          {/* HIDDEN TEST CASES */}
+
+          <div className="bg-zinc-900 p-6 rounded-xl">
+
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-2xl font-semibold">
                 Hidden Test Cases
               </h2>
+
               <button
                 type="button"
-                onClick={() => appendHidden({ input: "", output: "", explanation: "" })}
-                className="text-sm border border-zinc-700 rounded-lg px-3 py-1.5 text-zinc-300 hover:bg-zinc-800"
+                onClick={() =>
+                  appendHidden({
+                    input: "",
+                    output: "",
+                    explanation: "",
+                  })
+                }
+                className="bg-white text-black px-3 py-2 rounded-lg"
               >
-                + Add Case
+                Add Case
               </button>
             </div>
 
-            {errors.hiddenTestCases?.message && (
-              <p className="text-xs text-red-400 mb-3">{errors.hiddenTestCases.message}</p>
-            )}
+            <div className="space-y-4">
 
-            {hiddenFields.length === 0 && (
-              <div className="border border-dashed border-zinc-700 rounded-lg p-6 text-center text-sm text-zinc-600">
-                No hidden test cases yet. Add at least one.
-              </div>
-            )}
-
-            <div className="space-y-3">
               {hiddenFields.map((field, index) => (
-                <div key={field.id} className="border border-zinc-700 rounded-lg p-4 space-y-3 bg-zinc-800/40">
+                <div
+                  key={field.id}
+                  className="border border-zinc-700 p-4 rounded-lg space-y-3"
+                >
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-                      Case {index + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeHidden(index)}
-                      className="text-xs text-red-400 border border-red-900 rounded px-2 py-1 hover:bg-red-950"
-                    >
-                      Remove
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400 mb-1">Input</label>
-                      <input
-                        {...register(`hiddenTestCases.${index}.input`)}
-                        type="text"
-                        placeholder="e.g. nums = [3,3], target = 6"
-                        className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                          errors.hiddenTestCases?.[index]?.input ? "border-red-500" : "border-zinc-700"
-                        }`}
-                      />
-                      {errors.hiddenTestCases?.[index]?.input && (
-                        <p className="text-xs text-red-400 mt-1">{errors.hiddenTestCases[index].input.message}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-zinc-400 mb-1">Output</label>
-                      <input
-                        {...register(`hiddenTestCases.${index}.output`)}
-                        type="text"
-                        placeholder="e.g. [0,1]"
-                        className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 ${
-                          errors.hiddenTestCases?.[index]?.output ? "border-red-500" : "border-zinc-700"
-                        }`}
-                      />
-                      {errors.hiddenTestCases?.[index]?.output && (
-                        <p className="text-xs text-red-400 mt-1">{errors.hiddenTestCases[index].output.message}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">Explanation</label>
-                    <textarea
-                      {...register(`hiddenTestCases.${index}.explanation`)}
-                      rows={2}
-                      placeholder="Explain why this is the correct output..."
-                      className={`w-full rounded-lg px-3 py-2 text-sm outline-none bg-zinc-800 border text-zinc-100 placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 resize-y ${
-                        errors.hiddenTestCases?.[index]?.explanation ? "border-red-500" : "border-zinc-700"
-                      }`}
-                    />
-                    {errors.hiddenTestCases?.[index]?.explanation && (
-                      <p className="text-xs text-red-400 mt-1">{errors.hiddenTestCases[index].explanation.message}</p>
+                  <input
+                    {...register(
+                      `HiddenTestCases.${index}.input`
                     )}
-                  </div>
+                    placeholder="Input"
+                    className="w-full bg-zinc-800 p-3 rounded-lg"
+                  />
+
+                  <input
+                    {...register(
+                      `HiddenTestCases.${index}.output`
+                    )}
+                    placeholder="Output"
+                    className="w-full bg-zinc-800 p-3 rounded-lg"
+                  />
+
+                  <textarea
+                    {...register(
+                      `HiddenTestCases.${index}.explanation`
+                    )}
+                    placeholder="Explanation"
+                    className="w-full bg-zinc-800 p-3 rounded-lg"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeHidden(index)}
+                    className="bg-red-500 px-3 py-2 rounded-lg"
+                  >
+                    Remove
+                  </button>
 
                 </div>
               ))}
+
             </div>
           </div>
 
-          {/* ── Code Templates ── */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">
+          {/* CODE SECTION */}
+
+          <div className="bg-zinc-900 p-6 rounded-xl">
+
+            <h2 className="text-2xl font-semibold mb-5">
               Code Templates
             </h2>
 
-            <div className="space-y-4">
-              {LANGUAGES.map((lang, index) => (
-                <div key={lang.label} className="border border-zinc-700 rounded-lg overflow-hidden">
+            <div className="space-y-6">
 
-                  <div className="flex items-center gap-2 px-4 py-2 bg-zinc-800 border-b border-zinc-700">
-                    <span className={`w-2 h-2 rounded-full ${lang.dot}`} />
-                    <span className="text-xs font-semibold text-zinc-300">{lang.label}</span>
+              {LANGUAGES.map((lang, index) => (
+                <div
+                  key={lang.label}
+                  className="border border-zinc-700 rounded-xl overflow-hidden"
+                >
+
+                  <div className="bg-zinc-800 p-3 font-semibold">
+                    {lang.label}
                   </div>
 
-                  <div className="grid grid-cols-2 bg-zinc-900">
+                  <div className="grid grid-cols-2">
 
-                    <div className="p-3 border-r border-zinc-700">
-                      <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                    <div className="p-4 border-r border-zinc-700">
+                      <p className="mb-2 text-sm">
                         Starter Code
-                      </label>
+                      </p>
+
                       <textarea
-                        {...register(`startCode.${index}.initialCode`)} // ✅ changed from code to initialCode
-                        rows={6}
-                        placeholder={`// ${lang.label} starter code`}
-                        className={`w-full text-xs font-mono bg-transparent outline-none resize-y text-zinc-300 placeholder-zinc-600 ${
-                          errors.StartCode?.[index]?.initialCode ? "border border-red-500 rounded p-1" : ""
-                        }`}
+                        rows={10}
+                        {...register(
+                          `startCode.${index}.initialCode`
+                        )}
+                        className="w-full bg-zinc-950 p-3 rounded-lg font-mono text-sm"
                       />
-                      {errors.StartCode?.[index]?.initialCode && (
-                        <p className="text-xs text-red-400 mt-1">{errors.StartCode[index].initialCode.message}</p>
+
+                      {errors.startCode?.[index]?.initialCode && (
+                        <p className="text-red-400 text-sm mt-1">
+                          {
+                            errors.startCode[index]
+                              .initialCode.message
+                          }
+                        </p>
                       )}
                     </div>
 
-                    <div className="p-3">
-                      <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                    <div className="p-4">
+                      <p className="mb-2 text-sm">
                         Reference Solution
-                      </label>
+                      </p>
+
                       <textarea
-                        {...register(`referenceSolution.${index}.completeCode`)}
-                        rows={6}
-                        placeholder={`// ${lang.label} solution`}
-                        className={`w-full text-xs font-mono bg-transparent outline-none resize-y text-zinc-300 placeholder-zinc-600 ${
-                          errors.referenceSolution?.[index]?.completeCode ? "border border-red-500 rounded p-1" : ""
-                        }`}
+                        rows={10}
+                        {...register(
+                          `referenceSolution.${index}.completeCode`
+                        )}
+                        className="w-full bg-zinc-950 p-3 rounded-lg font-mono text-sm"
                       />
-                      {errors.referenceSolution?.[index]?.completeCode && (
-                        <p className="text-xs text-red-400 mt-1">{errors.referenceSolution[index].completeCode.message}</p>
+
+                      {errors.referenceSolution?.[index]
+                        ?.completeCode && (
+                        <p className="text-red-400 text-sm mt-1">
+                          {
+                            errors.referenceSolution[index]
+                              .completeCode.message
+                          }
+                        </p>
                       )}
                     </div>
 
                   </div>
                 </div>
               ))}
+
             </div>
           </div>
 
-          {/* ── Footer Buttons ── */}
-          <div className="flex justify-end gap-3 pb-8">
-            <button
-              type="button"
-              onClick={() => navigate("/")}
-              className="px-4 py-2 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800"
-            >
-              Cancel
-            </button>
+          {/* SUBMIT */}
+
+          <div className="flex justify-end">
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-6 py-2 text-sm font-semibold bg-white text-zinc-900 rounded-lg hover:bg-zinc-200 ${
-                isSubmitting ? "opacity-60 cursor-not-allowed" : ""
-              }`}
+              className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
             >
-              {isSubmitting ? "Publishing..." : "Publish Problem"}
+              {isSubmitting
+                ? "Publishing..."
+                : "Publish Problem"}
             </button>
           </div>
 
