@@ -23,7 +23,7 @@ const DIFFICULTY_STYLE = {
 function ProblemPage() {
   const { id } = useParams();
   const editorRef = useRef(null);
-
+  const [submissions, setSubmissions] = useState(null);
   const [problem,          setProblem]          = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [code,             setCode]             = useState('// Start coding here...');
@@ -38,6 +38,7 @@ function ProblemPage() {
   const [submitMessage,    setSubmitMessage]    = useState('');
   const [elapsedSeconds,   setElapsedSeconds]   = useState(0);
   const [timerRunning,     setTimerRunning]     = useState(false);
+  const [expandedCodeId,   setExpandedCodeId]   = useState(null);
 
   /* ── fetch problem ── */
   useEffect(() => {
@@ -48,6 +49,7 @@ function ProblemPage() {
         console.log('API response:', response);
         const data = response?.data?.problem ?? response?.data;
         setProblem(data);
+
 
         const starter = data?.StartCode?.find((sc) => {
           if (sc.language === 'C++'        && selectedLanguage === 'cpp')        return true;
@@ -65,6 +67,22 @@ function ProblemPage() {
     };
     fetchProblem();
   }, [id]);
+  //submissions
+  useEffect(() => {
+    if (!problem) return;
+
+    const fetchSubmissions = async () => {
+      try {
+        const response = await axiosClient.get(`/submissionDetail/${problem._id}`);
+        setSubmissions(response.data.submissions ?? []);
+      } catch (err) {
+        console.error('Error fetching submissions:', err);
+        setSubmissions(null);
+      }
+    };
+
+    fetchSubmissions();
+  }, [problem]);
 
 const runProblem = async () => {
   try {
@@ -173,7 +191,7 @@ const submitProblem = async () => {
 
           {/* Left Tabs */}
           <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0">
-            {['description', 'testcases', 'solutions', 'ai', 'editorial'].map(tab => (
+            {['description', 'testcases', 'solutions', 'ai', 'editorial','submissions'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveLeftTab(tab)}
@@ -312,6 +330,64 @@ const submitProblem = async () => {
                 <PlayerComponent secureUrl={problem.secureUrl} thumbnailUrl={problem.thumbnailUrl} duration={problem.duration}></PlayerComponent>
               )
             }
+            {/* submissions tab */}
+            {activeLeftTab === 'submissions' && (
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Your Submission</h3>
+
+                {submissions.length === 0 ? (
+                  <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm text-gray-400">
+                    No submissions found for this problem yet.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {submissions.map((item) => (
+                      <div key={item._id} className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-xs uppercase tracking-widest text-cyan-400">Status</p>
+                            <p className="text-base font-semibold text-white capitalize">{item.status}</p>
+                          </div>
+                          <span className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs text-gray-300">
+                            {item.language}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 text-xs text-gray-300">
+                          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                            <p className="text-gray-500">Runtime</p>
+                            <p className="mt-1 text-white">{item.runtime ?? 0} ms</p>
+                          </div>
+                          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                            <p className="text-gray-500">Memory</p>
+                            <p className="mt-1 text-white">{item.memory ?? 0} KB</p>
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-xs uppercase tracking-widest text-gray-500">Code</p>
+                            <button
+                              type="button"
+                              onClick={() => setExpandedCodeId(expandedCodeId === item._id ? null : item._id)}
+                              className="rounded border border-[#30363d] bg-[#21262d] px-2 py-1 text-[11px] text-cyan-300 hover:bg-[#30363d]"
+                            >
+                              {expandedCodeId === item._id ? 'Hide Code' : 'Show Code'}
+                            </button>
+                          </div>
+
+                          {expandedCodeId === item._id && (
+                            <pre className="mt-2 max-h-48 overflow-y-auto whitespace-pre-wrap rounded bg-[#090d13] p-3 text-xs text-gray-200">
+                              {item.code || 'No code available'}
+                            </pre>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             
 

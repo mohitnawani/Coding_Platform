@@ -10,6 +10,7 @@ const submitRouter = require('./routes/submit.js');
 const aiRouter = require('./routes/aiChatting');
 const videosSection = require('./routes/videoSection');
 const cors = require('cors');
+const submissionsRouter= require('./routes/submissionsDetail');
 
 const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
@@ -37,6 +38,8 @@ app.use('/problem', problemRouter);
 app.use('/submission', submitRouter);
 app.use('/ai', aiRouter);
 app.use('/uploads', videosSection);
+app.use('/submissionDetail', submissionsRouter);
+app.use('/comment', require('./routes/commentRoute'));
 
 // Health Check
 // app.get('/api/health', (req, res) => {

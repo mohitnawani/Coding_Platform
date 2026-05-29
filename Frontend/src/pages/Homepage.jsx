@@ -15,7 +15,7 @@ function Homepage() {
   const [showLogout, setShowLogout] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  console.log("User in Homepage.jsx:", user);
+  // console.log("User in Homepage.jsx:", user);
   const [Problems, setProblems] = useState([]);
   const [solvedProblems, setSolvedProblems] = useState([]);
   const [filters, setFilters] = useState({ difficulty: 'all', tag: 'all', status: 'all' });

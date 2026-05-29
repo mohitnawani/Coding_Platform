@@ -156,13 +156,14 @@ const getProblemById = async (req, res) => {
   try {
     if (!id) return res.status(400).json({ message: "ID is not provided" });
 
+    userId = req.result._id;
     const foundProblem = await problem.findById(id);
     if (!foundProblem) return res.status(404).json({ message: "Problem not found" });
     const video = await SolutionVideo.findOne({ problemId: id }).lean();
     console.log("Video found for problem:", video);
 
     const responseData = {
-      ...foundProblem.toObject(),
+      ...foundProblem.toObject(),userId,
       ...(video
         ? {
             secureUrl: video.secureUrl,
