@@ -7,6 +7,7 @@ import submitcode from '../utils/submitcode';
 import Aichat from '../components/Aichat';
 import ReactPlayer from 'react-player'
 import PlayerComponent from '../components/PlayerComponent';
+import CommentForm from '../components/CommentForm';
 
 const LANGUAGES = [
   { label: 'JavaScript', value: 'javascript', key: 'Javascript' },
@@ -23,6 +24,7 @@ const DIFFICULTY_STYLE = {
 function ProblemPage() {
   const { id } = useParams();
   const editorRef = useRef(null);
+  const [comments, setComments] = useState([]);
   const [submissions, setSubmissions] = useState(null);
   const [problem,          setProblem]          = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
@@ -83,6 +85,25 @@ function ProblemPage() {
 
     fetchSubmissions();
   }, [problem]);
+
+  //commnetslist
+  useEffect(()=>{
+
+    const fetchComments = async () => {
+      try {
+        const commentslist= await axiosClient.get(`/comment/get/${problem._id}`);
+        setComments(commentslist.data.comments);
+      }
+
+      catch(err)
+      {
+        console.error('Error fetching comments:', err);
+      }
+
+      };
+
+      fetchComments();
+  },[])
 
 const runProblem = async () => {
   try {
@@ -190,8 +211,8 @@ const submitProblem = async () => {
         <div className="w-[42%] flex flex-col border-r border-[#30363d] overflow-scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d]">
 
           {/* Left Tabs */}
-          <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0">
-            {['description', 'testcases', 'solutions', 'ai', 'editorial','submissions'].map(tab => (
+          <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0 overflow-x-auto">
+            {['description', 'testcases', 'solutions', 'ai', 'editorial','submissions', 'comments'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveLeftTab(tab)}
@@ -207,7 +228,7 @@ const submitProblem = async () => {
           </div>
 
           {/* Left Content */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d]">
+          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d] overflow-x-auto">
 
             {/* ── Description Tab ── */}
             {activeLeftTab === 'description' && (
@@ -388,6 +409,16 @@ const submitProblem = async () => {
                 )}
               </div>
             )}
+
+            {/* comments tab */}
+            {
+              activeLeftTab==='comments' && (
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Comments</h3>
+                  <CommentForm problemId={problem._id} />
+                </div>
+              )
+            }
 
             
 
