@@ -70,9 +70,9 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
         >
           <div className="w-8 h-8 rounded-full bg-orange-400 text-gray-900 font-bold flex items-center justify-center text-sm">
-            {user.firstName?.charAt(0)?.toUpperCase()}
+            {user?.firstName?.charAt(0)?.toUpperCase() || 'U'}
           </div>
-          <span className="text-sm">{user.firstName}</span>
+          <span className="text-sm">{user?.firstName || 'User'}</span>
         </button>
       </nav>
 
@@ -200,11 +200,11 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
           >
             <div className="w-12 h-12 rounded-full bg-orange-400/10 border border-orange-400/30 flex items-center justify-center mx-auto mb-4">
               <span className="text-orange-400 text-xl font-bold">
-                {user.firstName.charAt(0).toUpperCase()}
+                {user?.firstName?.charAt(0)?.toUpperCase() || 'U'}
               </span>
             </div>
             <p className="text-white font-semibold mb-1">Log out?</p>
-            <p className="text-gray-500 text-sm mb-5">See you next time, {user.firstName}!</p>
+            <p className="text-gray-500 text-sm mb-5">See you next time, {user?.firstName || 'User'}!</p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => setShowLogout(false)}

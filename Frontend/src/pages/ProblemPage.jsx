@@ -8,6 +8,7 @@ import Aichat from '../components/Aichat';
 import ReactPlayer from 'react-player'
 import PlayerComponent from '../components/PlayerComponent';
 import CommentForm from '../components/CommentForm';
+import CommentList from '../components/CommentList';
 
 const LANGUAGES = [
   { label: 'JavaScript', value: 'javascript', key: 'Javascript' },
@@ -86,24 +87,21 @@ function ProblemPage() {
     fetchSubmissions();
   }, [problem]);
 
-  //commnetslist
-  useEffect(()=>{
+  // comments list
+  useEffect(() => {
+    if (!problem?._id) return;
 
     const fetchComments = async () => {
       try {
-        const commentslist= await axiosClient.get(`/comment/get/${problem._id}`);
-        setComments(commentslist.data.comments);
-      }
-
-      catch(err)
-      {
+        const commentslist = await axiosClient.get(`/comment/get/${problem._id}`);
+        setComments(commentslist.data.comments ?? []);
+      } catch (err) {
         console.error('Error fetching comments:', err);
       }
+    };
 
-      };
-
-      fetchComments();
-  },[])
+    fetchComments();
+  }, [problem?._id]); // refetch when problem changes or new comment is added
 
 const runProblem = async () => {
   try {
@@ -189,331 +187,329 @@ const submitProblem = async () => {
 
   const visibleCases = problem.visibleTestCases ?? [];
 
-  return (
-    <div className="min-h-screen bg-[#0d1117] text-gray-100 flex flex-col" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
+return (
+  <div className="h-screen bg-[#0d1117] text-gray-100 flex flex-col overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
 
-      {/* ── Top Bar ── */}
-      <header className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-6 gap-6 shrink-0">
-        <span className="text-cyan-400 font-bold tracking-widest text-sm">⟨/⟩ Coder</span>
-        <div className="flex-1" />
-        <span className={`text-xs px-3 py-1 rounded-full font-semibold capitalize ${DIFFICULTY_STYLE[problem.difficulty] ?? DIFFICULTY_STYLE.easy}`}>
-          {problem.difficulty}
-        </span>
-        <span className="text-xs bg-[#21262d] text-gray-400 px-3 py-1 rounded-full border border-[#30363d]">
-          #{problem.tags}
-        </span>
-      </header>
+    {/* ── Top Bar ── */}
+    <header className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-6 gap-6 shrink-0">
+      <span className="text-cyan-400 font-bold tracking-widest text-sm">⟨/⟩ Coder</span>
+      <div className="flex-1" />
+      <span className={`text-xs px-3 py-1 rounded-full font-semibold capitalize ${DIFFICULTY_STYLE[problem.difficulty] ?? DIFFICULTY_STYLE.easy}`}>
+        {problem.difficulty}
+      </span>
+      <span className="text-xs bg-[#21262d] text-gray-400 px-3 py-1 rounded-full border border-[#30363d]">
+        #{problem.tags}
+      </span>
+    </header>
 
-      {/* ── Main Split ── */}
-      <div className="flex flex-1 overflow-hidden">
+    {/* ── Main Split ── */}
+    <div className="flex flex-1 min-h-0 overflow-hidden">
 
-        {/* ════ LEFT PANEL ════ */}
-        <div className="w-[42%] flex flex-col border-r border-[#30363d] overflow-scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d]">
+      {/* ════ LEFT PANEL ════ */}
+      <div className="w-[42%] flex flex-col min-h-0 overflow-hidden border-r border-[#30363d]">
 
-          {/* Left Tabs */}
-          <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0 overflow-x-auto">
-            {['description', 'testcases', 'solutions', 'ai', 'editorial','submissions', 'comments'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveLeftTab(tab)}
-                className={`px-5 py-3 text-xs font-semibold uppercase tracking-widest transition-all ${
-                  activeLeftTab === tab
-                    ? 'text-cyan-400 border-b-2 border-cyan-400 bg-[#0d1117]'
-                    : 'text-gray-500 hover:text-gray-300'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {/* Left Content */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d] overflow-x-auto">
-
-            {/* ── Description Tab ── */}
-            {activeLeftTab === 'description' && (
-              <div className="space-y-6">
-                <div>
-                  <h1 className="text-xl font-bold text-white leading-tight mb-2">{problem.title}</h1>
-                  <p className="text-gray-400 text-sm leading-relaxed">{problem.description}</p>
-                </div>
-
-                {/* Examples */}
-                {visibleCases.length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Examples</h3>
-                    {visibleCases.map((tc, i) => (
-                      <div key={tc._id} className="bg-[#161b22] rounded-xl border border-[#30363d] overflow-hidden">
-                        <div className="px-4 py-2 bg-[#21262d] border-b border-[#30363d]">
-                          <span className="text-xs text-cyan-400 font-semibold">Example {i + 1}</span>
-                        </div>
-                        <div className="p-4 space-y-2 text-sm font-mono">
-                          <div className="flex gap-3">
-                            <span className="text-gray-500 w-20 shrink-0">Input:</span>
-                            <span className="text-emerald-400">{tc.input}</span>
-                          </div>
-                          <div className="flex gap-3">
-                            <span className="text-gray-500 w-20 shrink-0">Output:</span>
-                            <span className="text-amber-400">{tc.output}</span>
-                          </div>
-                          {tc.explanation && (
-                            <div className="flex gap-3">
-                              <span className="text-gray-500 w-20 shrink-0">Note:</span>
-                              <span className="text-gray-400 font-sans">{tc.explanation}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── Test Cases Tab ── */}
-            {activeLeftTab === 'testcases' && (
-              <div className="space-y-4">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Visible Test Cases</h3>
-
-                {/* Tab selectors */}
-                <div className="flex gap-2 flex-wrap">
-                  {visibleCases.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveTestCase(i)}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                        activeTestCase === i
-                          ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
-                          : 'bg-[#21262d] text-gray-400 border border-[#30363d] hover:text-white'
-                      }`}
-                    >
-                      Case {i + 1}
-                    </button>
-                  ))}
-                </div>
-
-                {visibleCases[activeTestCase] && (
-                  <div className="space-y-3">
-                    <div className="bg-[#161b22] rounded-xl border border-[#30363d] p-4 space-y-3 font-mono text-sm">
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Input</p>
-                        <div className="bg-[#0d1117] rounded-lg px-4 py-3 text-emerald-400">
-                          {visibleCases[activeTestCase].input}
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Expected Output</p>
-                        <div className="bg-[#0d1117] rounded-lg px-4 py-3 text-amber-400">
-                          {visibleCases[activeTestCase].output}
-                        </div>
-                      </div>
-                      {visibleCases[activeTestCase].explanation && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Explanation</p>
-                          <div className="bg-[#0d1117] rounded-lg px-4 py-3 text-gray-300 font-sans text-sm">
-                            {visibleCases[activeTestCase].explanation}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── Solutions Tab ── */}
-            {activeLeftTab === 'solutions' && (
-              <div className="space-y-4">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Reference Solutions</h3>
-                {(problem.referenceSolution ?? []).map((sol) => (
-                  <div key={sol._id} className="bg-[#161b22] rounded-xl border border-[#30363d] overflow-hidden">
-                    <div className="px-4 py-2 bg-[#21262d] border-b border-[#30363d] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                      <span className="text-xs text-cyan-400 font-semibold">{sol.language}</span>
-                    </div>
-                    <pre className="p-4 text-xs text-gray-300 overflow-x-auto leading-relaxed">
-                      {sol.completeCode}
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* ai tab} */}
-            {
-              activeLeftTab==='ai' && (
-                <Aichat problem={problem}></Aichat>
-              )
-            }
-            {/*editorial*/}
-            {
-              activeLeftTab==='editorial' && (
-                <PlayerComponent secureUrl={problem.secureUrl} thumbnailUrl={problem.thumbnailUrl} duration={problem.duration}></PlayerComponent>
-              )
-            }
-            {/* submissions tab */}
-            {activeLeftTab === 'submissions' && (
-              <div className="space-y-4">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Your Submission</h3>
-
-                {submissions.length === 0 ? (
-                  <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm text-gray-400">
-                    No submissions found for this problem yet.
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {submissions.map((item) => (
-                      <div key={item._id} className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm space-y-3">
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="text-xs uppercase tracking-widest text-cyan-400">Status</p>
-                            <p className="text-base font-semibold text-white capitalize">{item.status}</p>
-                          </div>
-                          <span className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs text-gray-300">
-                            {item.language}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 text-xs text-gray-300">
-                          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-                            <p className="text-gray-500">Runtime</p>
-                            <p className="mt-1 text-white">{item.runtime ?? 0} ms</p>
-                          </div>
-                          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-                            <p className="text-gray-500">Memory</p>
-                            <p className="mt-1 text-white">{item.memory ?? 0} KB</p>
-                          </div>
-                        </div>
-
-                        <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="text-xs uppercase tracking-widest text-gray-500">Code</p>
-                            <button
-                              type="button"
-                              onClick={() => setExpandedCodeId(expandedCodeId === item._id ? null : item._id)}
-                              className="rounded border border-[#30363d] bg-[#21262d] px-2 py-1 text-[11px] text-cyan-300 hover:bg-[#30363d]"
-                            >
-                              {expandedCodeId === item._id ? 'Hide Code' : 'Show Code'}
-                            </button>
-                          </div>
-
-                          {expandedCodeId === item._id && (
-                            <pre className="mt-2 max-h-48 overflow-y-auto whitespace-pre-wrap rounded bg-[#090d13] p-3 text-xs text-gray-200">
-                              {item.code || 'No code available'}
-                            </pre>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* comments tab */}
-            {
-              activeLeftTab==='comments' && (
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Comments</h3>
-                  <CommentForm problemId={problem._id} />
-                </div>
-              )
-            }
-
-            
-
-          </div>
+        {/* Left Tabs */}
+        <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0 overflow-x-auto">
+          {['description', 'testcases', 'solutions', 'ai', 'editorial', 'submissions', 'comments'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveLeftTab(tab)}
+              className={`px-5 py-3 text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap ${
+                activeLeftTab === tab
+                  ? 'text-cyan-400 border-b-2 border-cyan-400 bg-[#0d1117]'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {/* ════ RIGHT PANEL ════ */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Left Content */}
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d]">
 
-          {/* Editor Toolbar */}
-          <div className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-4 gap-3 shrink-0">
-            {/* Language Selector */}
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="bg-[#21262d] text-gray-300 text-xs border border-[#30363d] rounded-lg px-3 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
-            >
-              {LANGUAGES.map(l => (
-                <option key={l.value} value={l.value}>{l.label}</option>
+          {/* ── Description Tab ── */}
+          {activeLeftTab === 'description' && (
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-xl font-bold text-white leading-tight mb-2">{problem.title}</h1>
+                <p className="text-gray-400 text-sm leading-relaxed">{problem.description}</p>
+              </div>
+
+              {visibleCases.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Examples</h3>
+                  {visibleCases.map((tc, i) => (
+                    <div key={tc._id} className="bg-[#161b22] rounded-xl border border-[#30363d]">
+                      <div className="px-4 py-2 bg-[#21262d] border-b border-[#30363d]">
+                        <span className="text-xs text-cyan-400 font-semibold">Example {i + 1}</span>
+                      </div>
+                      <div className="p-4 space-y-2 text-sm font-mono">
+                        <div className="flex gap-3">
+                          <span className="text-gray-500 w-20 shrink-0">Input:</span>
+                          <span className="text-emerald-400 break-all">{tc.input}</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <span className="text-gray-500 w-20 shrink-0">Output:</span>
+                          <span className="text-amber-400 break-all">{tc.output}</span>
+                        </div>
+                        {tc.explanation && (
+                          <div className="flex gap-3">
+                            <span className="text-gray-500 w-20 shrink-0">Note:</span>
+                            <span className="text-gray-400 font-sans">{tc.explanation}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Test Cases Tab ── */}
+          {activeLeftTab === 'testcases' && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Visible Test Cases</h3>
+
+              <div className="flex gap-2 flex-wrap">
+                {visibleCases.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveTestCase(i)}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      activeTestCase === i
+                        ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
+                        : 'bg-[#21262d] text-gray-400 border border-[#30363d] hover:text-white'
+                    }`}
+                  >
+                    Case {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              {visibleCases[activeTestCase] && (
+                <div className="space-y-3">
+                  <div className="bg-[#161b22] rounded-xl border border-[#30363d] p-4 space-y-3 font-mono text-sm">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Input</p>
+                      <div className="bg-[#0d1117] rounded-lg px-4 py-3 text-emerald-400 break-all">
+                        {visibleCases[activeTestCase].input}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Expected Output</p>
+                      <div className="bg-[#0d1117] rounded-lg px-4 py-3 text-amber-400 break-all">
+                        {visibleCases[activeTestCase].output}
+                      </div>
+                    </div>
+                    {visibleCases[activeTestCase].explanation && (
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Explanation</p>
+                        <div className="bg-[#0d1117] rounded-lg px-4 py-3 text-gray-300 font-sans text-sm">
+                          {visibleCases[activeTestCase].explanation}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Solutions Tab ── */}
+          {activeLeftTab === 'solutions' && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Reference Solutions</h3>
+              {(problem.referenceSolution ?? []).map((sol) => (
+                <div key={sol._id} className="bg-[#161b22] rounded-xl border border-[#30363d]">
+                  <div className="px-4 py-2 bg-[#21262d] border-b border-[#30363d] flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                    <span className="text-xs text-cyan-400 font-semibold">{sol.language}</span>
+                  </div>
+                  <pre className="p-4 text-xs text-gray-300 overflow-x-auto leading-relaxed">
+                    {sol.completeCode}
+                  </pre>
+                </div>
               ))}
-            </select>
+            </div>
+          )}
 
-            <div className="flex-1" />
+          {/* ── AI Tab ── */}
+          {activeLeftTab === 'ai' && (
+            <Aichat problem={problem} />
+          )}
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 bg-[#21262d] text-gray-200 text-xs border border-[#30363d] rounded-lg px-3 py-1.5 shadow-sm shadow-[#30363d]/20">
-                <span className="font-mono">
-                  {new Date(elapsedSeconds * 1000).toISOString().substr(14, 5)}
-                </span>
-                <button
-                  onClick={() => setTimerRunning((r) => !r)}
-                  className="px-2 py-0.5 rounded bg-[#30363d] hover:bg-[#3a3f47] transition text-[11px]"
-                >
-                  {timerRunning ? 'Pause' : 'Start'}
-                </button>
-                <button
-                  onClick={() => { setElapsedSeconds(0); setTimerRunning(false); }}
-                  className="px-2 py-0.5 rounded hover:bg-[#30363d] transition text-[11px]"
-                >
-                  Reset
-                </button>
+          {/* ── Editorial Tab ── */}
+          {activeLeftTab === 'editorial' && (
+            <PlayerComponent
+              secureUrl={problem.secureUrl}
+              thumbnailUrl={problem.thumbnailUrl}
+              duration={problem.duration}
+            />
+          )}
+
+          {/* ── Submissions Tab ── */}
+          {activeLeftTab === 'submissions' && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Your Submissions</h3>
+
+              {submissions.length === 0 ? (
+                <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm text-gray-400">
+                  No submissions found for this problem yet.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {submissions.map((item) => (
+                    <div key={item._id} className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm space-y-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-xs uppercase tracking-widest text-cyan-400">Status</p>
+                          <p className="text-base font-semibold text-white capitalize">{item.status}</p>
+                        </div>
+                        <span className="rounded-full border border-[#30363d] bg-[#21262d] px-3 py-1 text-xs text-gray-300">
+                          {item.language}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 text-xs text-gray-300">
+                        <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                          <p className="text-gray-500">Runtime</p>
+                          <p className="mt-1 text-white">{item.runtime ?? 0} ms</p>
+                        </div>
+                        <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                          <p className="text-gray-500">Memory</p>
+                          <p className="mt-1 text-white">{item.memory ?? 0} KB</p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-xs uppercase tracking-widest text-gray-500">Code</p>
+                          <button
+                            type="button"
+                            onClick={() => setExpandedCodeId(expandedCodeId === item._id ? null : item._id)}
+                            className="rounded border border-[#30363d] bg-[#21262d] px-2 py-1 text-[11px] text-cyan-300 hover:bg-[#30363d]"
+                          >
+                            {expandedCodeId === item._id ? 'Hide Code' : 'Show Code'}
+                          </button>
+                        </div>
+
+                        {expandedCodeId === item._id && (
+                          <pre className="mt-2 max-h-48 overflow-y-auto overflow-x-auto whitespace-pre rounded bg-[#090d13] p-3 text-xs text-gray-200">
+                            {item.code || 'No code available'}
+                          </pre>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Comments Tab ── */}
+          {activeLeftTab === 'comments' && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Comments</h3>
+              <CommentForm problemId={problem._id} />
+              <div className="mt-6 border-t border-[#30363d] pt-4">
+                <CommentList comments={comments} />
               </div>
             </div>
+          )}
 
-            <button
-              onClick={runProblem}
-              className="flex items-center gap-2 px-4 py-1.5 bg-[#21262d] hover:bg-[#30363d] text-gray-300 hover:text-white text-xs font-semibold rounded-lg border border-[#30363d] transition-all cursor-pointer shadow-sm shadow-[#30363d]/20"
-            >
-              ▶ Run
-            </button>
-            <button
-              onClick={submitProblem}
-              className="flex items-center gap-2 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all shadow-lg shadow-emerald-900/40 cursor-pointer"
-            >
-              ↑ Submit
-            </button>
+        </div>
+      </div>
+
+      {/* ════ RIGHT PANEL ════ */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+
+        {/* Editor Toolbar */}
+        <div className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-4 gap-3 shrink-0">
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            className="bg-[#21262d] text-gray-300 text-xs border border-[#30363d] rounded-lg px-3 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+          >
+            {LANGUAGES.map(l => (
+              <option key={l.value} value={l.value}>{l.label}</option>
+            ))}
+          </select>
+
+          <div className="flex-1" />
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-[#21262d] text-gray-200 text-xs border border-[#30363d] rounded-lg px-3 py-1.5">
+              <span className="font-mono">
+                {new Date(elapsedSeconds * 1000).toISOString().substr(14, 5)}
+              </span>
+              <button
+                onClick={() => setTimerRunning((r) => !r)}
+                className="px-2 py-0.5 rounded bg-[#30363d] hover:bg-[#3a3f47] transition text-[11px]"
+              >
+                {timerRunning ? 'Pause' : 'Start'}
+              </button>
+              <button
+                onClick={() => { setElapsedSeconds(0); setTimerRunning(false); }}
+                className="px-2 py-0.5 rounded hover:bg-[#30363d] transition text-[11px]"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
-          {/* Monaco Editor */}
-          <div className="flex-1 overflow-hidden max-h-[60vh]">
-            <Editor
-              height="100%"
-              language={selectedLanguage}
-              value={code}
-              onChange={(val) => setCode(val ?? '')}
-              onMount={handleEditorDidMount}
-              theme="vs-dark"
-              options={{
-                fontSize: 14,
-                fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                fontLigatures: true,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                lineNumbers: 'on',
-                renderLineHighlight: 'line',
-                padding: { top: 16 },
-                tabSize: 2,
-                wordWrap: 'on',
-                smoothScrolling: true,
-                cursorBlinking: 'smooth',
-                bracketPairColorization: { enabled: true },
-              }}
-            />
-          </div>
+          <button
+            onClick={runProblem}
+            className="flex items-center gap-2 px-4 py-1.5 bg-[#21262d] hover:bg-[#30363d] text-gray-300 hover:text-white text-xs font-semibold rounded-lg border border-[#30363d] transition-all cursor-pointer"
+          >
+            ▶ Run
+          </button>
+          <button
+            onClick={submitProblem}
+            className="flex items-center gap-2 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all cursor-pointer"
+          >
+            ↑ Submit
+          </button>
+        </div>
 
+        {/* Monaco Editor */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <Editor
+            height="100%"
+            language={selectedLanguage}
+            value={code}
+            onChange={(val) => setCode(val ?? '')}
+            onMount={handleEditorDidMount}
+            theme="vs-dark"
+            options={{
+              fontSize: 14,
+              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+              fontLigatures: true,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              lineNumbers: 'on',
+              renderLineHighlight: 'line',
+              padding: { top: 16 },
+              tabSize: 2,
+              wordWrap: 'on',
+              smoothScrolling: true,
+              cursorBlinking: 'smooth',
+              bracketPairColorization: { enabled: true },
+            }}
+          />
+        </div>
+
+        {/* Run Result */}
         {runResult && !Array.isArray(runResult) && (
-          <div className="overflow-auto max-h-48 bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-3">
+          <div className="shrink-0 overflow-auto max-h-48 bg-gray-900 p-4 border-t border-gray-700 space-y-3">
             <div className={`p-3 rounded border-l-4 ${
               runResult.status === 'accepted'
                 ? 'border-emerald-500 bg-emerald-900/20'
                 : 'border-red-500 bg-red-900/20'
             }`}>
               <div className="flex items-center justify-between">
-                <span className="text-white font-semibold text-sm capitalize">{runResult.status?.replace('_',' ')}</span>
+                <span className="text-white font-semibold text-sm capitalize">{runResult.status?.replace('_', ' ')}</span>
                 <span className="text-xs text-gray-400">{runResult.passed}/{runResult.total} passed</span>
               </div>
               <p className="text-gray-300 text-xs mt-2">{runResult.message}</p>
@@ -530,28 +526,29 @@ const submitProblem = async () => {
               <details className="text-xs text-gray-400">
                 <summary className="cursor-pointer text-cyan-400">See raw results</summary>
                 <pre className="mt-2 whitespace-pre-wrap text-gray-300 text-[11px] bg-gray-950 p-2 rounded border border-gray-700">
-{JSON.stringify(runResult.results, null, 2)}
+                  {JSON.stringify(runResult.results, null, 2)}
                 </pre>
               </details>
             )}
           </div>
         )}
+
+        {/* Submit Result Modal */}
         {submitResult && !Array.isArray(submitResult) && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 rounded-lg p-6 w-96 border border-gray-700 max-h-96 overflow-auto">
-              {/* Close Button */}
-              <button 
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="relative bg-gray-900 rounded-lg p-6 w-96 border border-gray-700 max-h-[80vh] overflow-auto">
+              <button
                 onClick={() => setSubmitResult(null)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl leading-none"
               >
                 ✕
               </button>
 
               <h2 className="text-white font-bold text-xl mb-4">Submission Result</h2>
-              
+
               <div className={`p-4 rounded-lg mb-4 ${
-                submitResult.status === 'accepted' 
-                  ? 'bg-green-900/30 border border-green-600' 
+                submitResult.status === 'accepted'
+                  ? 'bg-green-900/30 border border-green-600'
                   : 'bg-red-900/30 border border-red-600'
               }`}>
                 <p className={`text-lg font-bold ${
@@ -580,7 +577,7 @@ const submitProblem = async () => {
                 )}
               </div>
 
-              <button 
+              <button
                 onClick={() => setSubmitResult(null)}
                 className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded"
               >
@@ -590,22 +587,21 @@ const submitProblem = async () => {
           </div>
         )}
 
-
-          {/* Bottom Status Bar */}
-          <div className="h-7 bg-[#161b22] border-t border-[#30363d] flex items-center px-4 gap-4 shrink-0">
-            <span className="text-xs text-gray-600 font-mono">
-              {LANGUAGES.find(l => l.value === selectedLanguage)?.label}
-            </span>
-            <span className="text-xs text-gray-600">•</span>
-            <span className="text-xs text-gray-600 font-mono">UTF-8</span>
-            <div className="flex-1" />
-            <span className="text-xs text-cyan-600 font-mono">{problem.title}</span>
-          </div>
-
+        {/* Bottom Status Bar */}
+        <div className="h-7 bg-[#161b22] border-t border-[#30363d] flex items-center px-4 gap-4 shrink-0">
+          <span className="text-xs text-gray-600 font-mono">
+            {LANGUAGES.find(l => l.value === selectedLanguage)?.label}
+          </span>
+          <span className="text-xs text-gray-600">•</span>
+          <span className="text-xs text-gray-600 font-mono">UTF-8</span>
+          <div className="flex-1" />
+          <span className="text-xs text-cyan-600 font-mono">{problem.title}</span>
         </div>
+
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 
