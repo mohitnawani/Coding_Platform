@@ -5,7 +5,7 @@ const normalizeUser = (data) => {
   console.log("Normalizing user data:", data);
   const user = data?.user || data;
   if (!user) return null;
-  return { ...user, role: user.role || 'user' };
+  return { ...user };
 };
 
 const getErrorMessage = (error, fallback) => {

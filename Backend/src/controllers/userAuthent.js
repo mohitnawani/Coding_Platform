@@ -26,7 +26,7 @@ const register = async (req, res) => {
       firstName:user.firstName,
       emailId:user.emailId,
       _id:user._id,
-      role:user.role
+      role:user?.role
 
     }
     res.status(200).json({
@@ -57,7 +57,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { emailId: user.emailId, _id: user._id , role:user.role},
+      { emailId: user.emailId, _id: user._id , role:user?.role},
       process.env.JWT_KEY,
       { expiresIn: "1h" }
     );
@@ -70,7 +70,7 @@ const login = async (req, res) => {
       firstName:user.firstName,
       emailId:user.emailId,
       _id:user._id,
-      role:user.role
+      role:user?.role
     }
     // console.log("user from DB:", user); // ← check if role exists here
     // console.log("role value:", user.role); // ← is it undefined?
@@ -155,4 +155,5 @@ const deleteUser = async (req, res)=>{
     res.status(500).send("Error:"+ err.message);
   }
 }
+
 module.exports = { register, login, logout,adminRegister, deleteUser};

@@ -21,8 +21,9 @@ authRouter.post('/google-login', googleLogin);
 
 // Protected check route
 authRouter.get('/check', userMiddleware, (req, res) => {
+  const { _id, firstName, emailId, role } = req.result;
   return res.status(200).json({
-    user: req.user || null,
+    user: { _id, firstName, emailId, role },
     message: 'valid user'
   });
 });

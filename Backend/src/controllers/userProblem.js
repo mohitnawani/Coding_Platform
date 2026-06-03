@@ -140,14 +140,13 @@ const updateProblem = async (req, res) => {
 const deletedProblem = async (req, res) => {
   const { id } = req.params;
   try {
-    if (!id) return res.status(400).send("This id is not present");
+    const deletedProblem = await problem.findByIdAndDelete(id);
 
-    const Deleted_Id = await problem.findByIdAndDelete(id);
-    if (!Deleted_Id) return res.status(404).send("problem is not present");
+    if (!deletedProblem) return res.status(404).json({ message: "Problem not found" });
 
-    res.status(200).send("Problem is deleted SucessFully", Deleted_Id);
+    res.status(200).json({ message: "Problem deleted successfully", problem: deletedProblem });
   } catch (err) {
-    res.status(500).send("Error: " + err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
 
@@ -187,11 +186,9 @@ const getAllProblem = async (req,res)=>{
 
     if(!AllProblem) return res.status(404).send("Problems Not Found")
 
-      res.status(200).send(AllProblem);
-}
-
-  catch(err){
-    res.status().send()("Error :"+err) 
+    res.status(200).send(AllProblem);
+  } catch(err){
+    res.status(500).send("Error :" + err);
   }
 }
 
@@ -215,4 +212,4 @@ const solvedAllProblembyUser =async (req , res)=>{
 
 
 
-module.exports = { createProblem, updateProblem, deletedProblem,getProblemById,getAllProblem,solvedAllProblembyUser};
+module.exports = { createProblem, updateProblem, deletedProblem, getProblemById, getAllProblem, solvedAllProblembyUser };

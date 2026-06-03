@@ -29,7 +29,7 @@ function App() {
   const location = useLocation();
   const didCheckAuth = useRef(false);
   const [bootstrapped, setBootstrapped] = useState(false);
-  const isAdmin = user?.role && typeof user.role === "string" ? user.role.toLowerCase() === "admin" : false;
+  const isAdmin = user?.role === 'admin'? true : false;
 
   useEffect(() => {
     if (didCheckAuth.current) return;
