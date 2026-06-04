@@ -1,4 +1,4 @@
-🚀 CodeJudge – Full Stack Coding Platform
+🚀 Coder – Full Stack Coding Platform
 
 A full-stack coding platform inspired by LeetCode where users can practice Data Structures & Algorithms problems, solve challenges, and track their progress.
 
