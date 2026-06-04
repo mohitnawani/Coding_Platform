@@ -1,17 +1,13 @@
-import axios from 'axios';
+import axiosClient from './axiosClient';
 
 // Execute visible runtest cases for a problem
 const runcode = async (userCode, language, problemId) => {
   try {
     const langForApi = language === 'cpp' ? 'c++' : language;
-    const response = await axios.post(
-      `http://localhost:3000/submission/run/${problemId}`,
-      { code: userCode, language: langForApi },
-      {
-        // ensure auth cookies are sent
-        withCredentials: true,
-      }
-    );
+    const response = await axiosClient.post(`/submission/run/${problemId}`, {
+      code: userCode,
+      language: langForApi,
+    });
     return response.data;
   } catch (err) {
     console.log(err);
