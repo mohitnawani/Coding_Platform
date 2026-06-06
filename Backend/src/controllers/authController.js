@@ -70,12 +70,7 @@ const googleLogin = async (req, res) => {
         role:user.role
       }
 
-      res.send({
-        user:reply,
-        message:"Login Successfully"
-      })
-
-      res.status(200).json({
+      return res.status(200).json({
         user:reply,
         message:"Login Successfully"
       })

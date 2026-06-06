@@ -12,6 +12,7 @@ const videosSection = require('./routes/videoSection');
 const cors = require('cors');
 const submissionsRouter= require('./routes/submissionsDetail');
 const commentRouter= require('./routes/commentRoute');
+const PORT = process.env.PORT || 3000;
 
 const allowedOrigins = [
   'http://localhost:5173', 
@@ -63,9 +64,9 @@ const InitalizeConnection = async () => {
     console.log('✅ DB Connected');
     console.log('✅ Redis Connected');
 
-    app.listen(process.env.PORT, () => {
-      console.log(`🚀 Server listening at port: ${process.env.PORT}`);
-      console.log(`📍 Running at: http://localhost:${process.env.PORT}`);
+    app.listen(PORT, () => {
+      console.log(`🚀 Server listening at port: ${PORT}`);
+      console.log(`📍 Running at: http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error('❌ Initialization Error:', err);
