@@ -5,6 +5,13 @@ const jwt = require("jsonwebtoken");
 const redis = require("../config/redis");
 const Submission = require("../models/submission")
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 60 * 60 * 1000,
+};
+
 const register = async (req, res) => {
   try {
 
@@ -20,7 +27,7 @@ const register = async (req, res) => {
       process.env.JWT_KEY,
       { expiresIn: 60 * 60 }
     );
-    res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+    res.cookie("token", token, cookieOptions);
 
     const reply={
       firstName:user.firstName,
@@ -62,10 +69,7 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 1000,
-    });
+    res.cookie("token", token, cookieOptions);
     const reply={
       firstName:user.firstName,
       emailId:user.emailId,
@@ -95,8 +99,10 @@ const logout = async (req, res) => {
     await redis.set(`token:${token}`, "Blocked");
     await redis.expireAt(`token:${token}`, payload.exp);
 
-    res.cookie("token", null, {
-      maxAge: payload.exp,
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     res.status(200).send("Logged Out Successfully");
@@ -118,7 +124,7 @@ const adminRegister = async (req, res)=>{
         const user=await User.create(req.body);
 
         const token =jwt.sign({emailId:user.emailId,_id:user._id, role:user.role},process.env.JWT_KEY,{expiresIn:60*60});
-        res.cookie('token',token,{maxAge:60*60*1000});
+        res.cookie('token', token, cookieOptions);
 
         res.status(201).send("Admin Registered Successfully");
 

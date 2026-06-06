@@ -6,6 +6,13 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 env.config();
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 60 * 60 * 1000,
+};
+
 // Initialize OAuth2Client with your Google credentials
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -59,7 +66,7 @@ const googleLogin = async (req, res) => {
         }
       );
 
-      res.cookie("token" , token, { maxAge: 60 * 60 * 1000 });
+      res.cookie("token", token, cookieOptions);
 
       console .log('User after creation:', user); // Log the user after creation or retrieval
 
