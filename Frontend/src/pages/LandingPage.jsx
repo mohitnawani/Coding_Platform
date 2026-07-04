@@ -75,7 +75,7 @@ function LandingPage() {
       {/* ── NAVBAR ── */}
     <Navbar/>
       {/* ── HERO ── */}
-      <section className="relative flex flex-col lg:flex-row items-center justify-between gap-16 px-8 lg:px-20 pt-24 pb-20 overflow-hidden">
+      <section className="relative flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16 px-4 sm:px-8 lg:px-20 pt-14 sm:pt-20 lg:pt-24 pb-16 lg:pb-20 overflow-hidden">
 
         {/* Grid background */}
         <div
@@ -98,7 +98,7 @@ function LandingPage() {
             Now with AI-powered hints
           </div>
 
-          <h1 className="text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-5">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-5">
             A New Way<br />
             <span className="text-gray-100">to Master Code</span>
           </h1>
@@ -107,10 +107,10 @@ function LandingPage() {
             Coder is the best platform to sharpen your skills, expand your knowledge, and crack technical interviews — one problem at a time.
           </p>
 
-          <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center lg:justify-start">
             <NavLink
               to="/signup"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-gray-900 font-bold text-sm hover:bg-gray-200 transition-all no-underline shadow-lg shadow-black/20 hover:-translate-y-0.5"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-gray-900 font-bold text-sm hover:bg-gray-200 transition-all no-underline shadow-lg shadow-black/20 hover:-translate-y-0.5"
             >
               Create Account
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,14 +119,14 @@ function LandingPage() {
             </NavLink>
             <NavLink
               to="/problems"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-transparent border border-gray-700 text-gray-300 font-semibold text-sm hover:border-gray-500 hover:text-white transition-all no-underline"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-transparent border border-gray-700 text-gray-300 font-semibold text-sm hover:border-gray-500 hover:text-white transition-all no-underline"
             >
               Browse Problems
             </NavLink>
           </div>
 
           {/* Stats */}
-          <div className="flex flex-wrap gap-8 justify-center lg:justify-start mt-10 pt-8 border-t border-gray-700/50">
+          <div className="flex flex-wrap gap-6 sm:gap-8 justify-center lg:justify-start mt-10 pt-8 border-t border-gray-700/50">
             {[
               { val: "3,500+", label: "Problems",   color: "text-white" },
               { val: "2M+",    label: "Developers", color: "text-gray-200" },
@@ -201,7 +201,7 @@ function LandingPage() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section className="py-20 px-8 lg:px-20">
+      <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-20">
         <div className="text-center mb-12">
           <p className="font-mono text-xs text-gray-400 tracking-widest mb-3 uppercase">What we offer</p>
           <h2 className="text-3xl lg:text-4xl font-black tracking-tight">
@@ -229,14 +229,14 @@ function LandingPage() {
       </section>
 
       {/* ── CTA BANNER ── */}
-      <section className="py-16 px-8 lg:px-20">
-        <div className="max-w-3xl mx-auto rounded-2xl p-12 text-center relative overflow-hidden border border-gray-700/50 bg-[#161b22]">
+      <section className="py-12 sm:py-16 px-4 sm:px-8 lg:px-20">
+        <div className="max-w-3xl mx-auto rounded-2xl p-6 sm:p-12 text-center relative overflow-hidden border border-gray-700/50 bg-[#161b22]">
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl"
             style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(251,146,60,0.12) 0%, transparent 65%)" }}
           />
           <p className="font-mono text-xs text-gray-400 tracking-widest mb-4 uppercase">Start for free</p>
-          <h2 className="text-3xl lg:text-4xl font-black tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight mb-4">
             Ready to crack your<br />
             <span className="text-white">dream interview?</span>
           </h2>
@@ -256,7 +256,7 @@ function LandingPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-gray-700/50 py-6 px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-600 text-xs font-mono">
+      <footer className="border-t border-gray-700/50 py-6 px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-600 text-xs font-mono text-center sm:text-left">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded bg-white flex items-center justify-center text-gray-900 text-[9px] font-black">C</div>
           <span>© 2025 Coder. All rights reserved.</span>

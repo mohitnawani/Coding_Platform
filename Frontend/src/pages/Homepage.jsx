@@ -61,7 +61,7 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
     <div className="bg-[#0d1117] min-h-screen text-white">
 
       {/* NAVBAR */}
-      <nav className="flex items-center justify-between px-8 h-14 bg-[#0d1117] border-b border-gray-700/50 sticky top-0 z-10 backdrop-blur-sm">
+      <nav className="flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 min-h-14 py-3 bg-[#0d1117] border-b border-gray-700/50 sticky top-0 z-10 backdrop-blur-sm">
         <a href="/" className="text-xl font-bold tracking-tight">
           <span className="text-orange-400">Coder</span>
         </a>
@@ -72,12 +72,12 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
           <div className="w-8 h-8 rounded-full bg-orange-400 text-gray-900 font-bold flex items-center justify-center text-sm">
             {user?.firstName?.charAt(0)?.toUpperCase() || 'U'}
           </div>
-          <span className="text-sm">{user?.firstName || 'User'}</span>
+          <span className="hidden text-sm sm:inline">{user?.firstName || 'User'}</span>
         </button>
       </nav>
 
       {/* MAIN */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
         {/* Header */}
 
@@ -103,7 +103,7 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
           </button>
         ))}
 
-        <div className="w-px bg-gray-700 mx-1" />
+        <div className="hidden sm:block w-px bg-gray-700 mx-1" />
 
         {/* Difficulty */}
         {['all', 'Easy', 'Medium', 'Hard'].map((d) => (
@@ -122,7 +122,7 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
           </button>
         ))}
 
-        <div className="w-px bg-gray-700 mx-1" />
+        <div className="hidden sm:block w-px bg-gray-700 mx-1" />
 
         {/* Tags */}
         <select
@@ -148,7 +148,7 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
       </div>
 
         {/* Column Labels */}
-        <div className="flex items-center gap-4 px-4 pb-2 text-xs text-gray-600 uppercase tracking-wider">
+        <div className="hidden sm:flex items-center gap-4 px-4 pb-2 text-xs text-gray-600 uppercase tracking-wider">
           <span className="w-5">#</span>
           <span className="flex-1">Title</span>
           <span className="w-28 text-center">Tags</span>
@@ -160,15 +160,15 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
           {filteredProblems.map((p, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 bg-[#161b22] hover:bg-[#1c2333] border border-white/5 hover:border-orange-400/20 rounded-lg px-4 py-3 text-sm transition-all duration-150 cursor-pointer group"
+              className="flex flex-col gap-3 bg-[#161b22] hover:bg-[#1c2333] border border-white/5 hover:border-orange-400/20 rounded-lg px-4 py-3 text-sm transition-all duration-150 cursor-pointer group sm:flex-row sm:items-center sm:gap-4"
             >
-              <span className="text-gray-600 w-5 text-xs">{i + 1}</span>
+              <span className="hidden text-gray-600 w-5 text-xs sm:inline">{i + 1}</span>
 
-              <NavLink to={`/problem/${p._id}`} className="flex-1 text-gray-200 group-hover:text-white transition-colors font-medium">
+              <NavLink to={`/problem/${p._id}`} className="flex-1 text-gray-200 group-hover:text-white transition-colors font-medium break-words">
                   {p.title}
               </NavLink>
 
-              <div className="flex gap-1.5 w-28 justify-center flex-wrap">
+              <div className="flex gap-1.5 justify-start flex-wrap sm:w-28 sm:justify-center">
                 {(Array.isArray(p.tags) ? p.tags : [p.tags]).map((tag) => (
                   <span
                     key={tag}
@@ -179,7 +179,7 @@ const allTags = [...new Set(Problems.flatMap((p) => Array.isArray(p.tags) ? p.ta
                 ))}
               </div>
 
-              <span className={`text-xs font-semibold w-14 text-right ${DIFF[p.difficulty]}`}>
+              <span className={`text-xs font-semibold sm:w-14 sm:text-right ${DIFF[p.difficulty]}`}>
                 {p.difficulty}
               </span>
             </div>

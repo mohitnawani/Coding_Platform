@@ -188,25 +188,25 @@ const submitProblem = async () => {
   const visibleCases = problem.visibleTestCases ?? [];
 
 return (
-  <div className="h-screen bg-[#0d1117] text-gray-100 flex flex-col overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
+  <div className="min-h-screen lg:h-screen bg-[#0d1117] text-gray-100 flex flex-col overflow-x-hidden lg:overflow-hidden" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}>
 
     {/* ── Top Bar ── */}
-    <header className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-6 gap-6 shrink-0">
-      <span className="text-cyan-400 font-bold tracking-widest text-sm">⟨/⟩ Coder</span>
-      <div className="flex-1" />
+    <header className="min-h-12 bg-[#161b22] border-b border-[#30363d] flex flex-wrap items-center px-4 sm:px-6 py-3 gap-3 sm:gap-6 shrink-0">
+      <span className="text-cyan-400 font-bold tracking-widest text-sm">Coder</span>
+      <div className="hidden sm:block flex-1" />
       <span className={`text-xs px-3 py-1 rounded-full font-semibold capitalize ${DIFFICULTY_STYLE[problem.difficulty] ?? DIFFICULTY_STYLE.easy}`}>
         {problem.difficulty}
       </span>
-      <span className="text-xs bg-[#21262d] text-gray-400 px-3 py-1 rounded-full border border-[#30363d]">
+      <span className="text-xs bg-[#21262d] text-gray-400 px-3 py-1 rounded-full border border-[#30363d] break-all">
         #{problem.tags}
       </span>
     </header>
 
     {/* ── Main Split ── */}
-    <div className="flex flex-1 min-h-0 overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 lg:flex-row lg:overflow-hidden">
 
       {/* ════ LEFT PANEL ════ */}
-      <div className="w-[42%] flex flex-col min-h-0 overflow-hidden border-r border-[#30363d]">
+      <div className="flex flex-col min-h-0 border-b border-[#30363d] lg:w-[42%] lg:overflow-hidden lg:border-b-0 lg:border-r">
 
         {/* Left Tabs */}
         <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0 overflow-x-auto">
@@ -214,7 +214,7 @@ return (
             <button
               key={tab}
               onClick={() => setActiveLeftTab(tab)}
-              className={`px-5 py-3 text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap ${
+              className={`px-3 sm:px-5 py-3 text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap ${
                 activeLeftTab === tab
                   ? 'text-cyan-400 border-b-2 border-cyan-400 bg-[#0d1117]'
                   : 'text-gray-500 hover:text-gray-300'
@@ -226,7 +226,7 @@ return (
         </div>
 
         {/* Left Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d]">
+        <div className="max-h-[48vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[#30363d] lg:max-h-none lg:flex-1 lg:min-h-0">
 
           {/* ── Description Tab ── */}
           {activeLeftTab === 'description' && (
@@ -354,13 +354,13 @@ return (
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Your Submissions</h3>
 
-              {submissions.length === 0 ? (
+              {(submissions ?? []).length === 0 ? (
                 <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm text-gray-400">
                   No submissions found for this problem yet.
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {submissions.map((item) => (
+                  {(submissions ?? []).map((item) => (
                     <div key={item._id} className="rounded-xl border border-[#30363d] bg-[#161b22] p-4 text-sm space-y-3">
                       <div className="flex items-center justify-between gap-3">
                         <div>
@@ -423,10 +423,10 @@ return (
       </div>
 
       {/* ════ RIGHT PANEL ════ */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0">
 
         {/* Editor Toolbar */}
-        <div className="h-12 bg-[#161b22] border-b border-[#30363d] flex items-center px-4 gap-3 shrink-0">
+        <div className="min-h-12 bg-[#161b22] border-b border-[#30363d] flex flex-wrap items-center px-3 sm:px-4 py-3 gap-2 sm:gap-3 shrink-0">
           <select
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
@@ -437,9 +437,9 @@ return (
             ))}
           </select>
 
-          <div className="flex-1" />
+          <div className="hidden sm:block flex-1" />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 max-w-full overflow-x-auto">
             <div className="flex items-center gap-2 bg-[#21262d] text-gray-200 text-xs border border-[#30363d] rounded-lg px-3 py-1.5">
               <span className="font-mono">
                 {new Date(elapsedSeconds * 1000).toISOString().substr(14, 5)}
@@ -461,20 +461,20 @@ return (
 
           <button
             onClick={runProblem}
-            className="flex items-center gap-2 px-4 py-1.5 bg-[#21262d] hover:bg-[#30363d] text-gray-300 hover:text-white text-xs font-semibold rounded-lg border border-[#30363d] transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-[#21262d] hover:bg-[#30363d] text-gray-300 hover:text-white text-xs font-semibold rounded-lg border border-[#30363d] transition-all cursor-pointer"
           >
             ▶ Run
           </button>
           <button
             onClick={submitProblem}
-            className="flex items-center gap-2 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all cursor-pointer"
           >
             ↑ Submit
           </button>
         </div>
 
         {/* Monaco Editor */}
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="h-[60vh] min-h-[360px] overflow-hidden lg:flex-1 lg:min-h-0 lg:h-auto">
           <Editor
             height="100%"
             language={selectedLanguage}
@@ -535,8 +535,8 @@ return (
 
         {/* Submit Result Modal */}
         {submitResult && !Array.isArray(submitResult) && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="relative bg-gray-900 rounded-lg p-6 w-96 border border-gray-700 max-h-[80vh] overflow-auto">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+            <div className="relative bg-gray-900 rounded-lg p-4 sm:p-6 w-full max-w-md border border-gray-700 max-h-[80vh] overflow-auto">
               <button
                 onClick={() => setSubmitResult(null)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl leading-none"
@@ -588,7 +588,7 @@ return (
         )}
 
         {/* Bottom Status Bar */}
-        <div className="h-7 bg-[#161b22] border-t border-[#30363d] flex items-center px-4 gap-4 shrink-0">
+        <div className="min-h-7 bg-[#161b22] border-t border-[#30363d] flex flex-wrap items-center px-4 py-1 gap-3 sm:gap-4 shrink-0">
           <span className="text-xs text-gray-600 font-mono">
             {LANGUAGES.find(l => l.value === selectedLanguage)?.label}
           </span>

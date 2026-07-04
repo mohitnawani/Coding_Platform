@@ -25,8 +25,8 @@ export default function AdminDashboard() {
       />
 
       {/* Navbar */}
-      <div className="bg-[#0d1117]/90 border-b border-gray-800 px-6 py-4 relative z-10 backdrop-blur">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <div className="bg-[#0d1117]/90 border-b border-gray-800 px-4 sm:px-6 py-4 relative z-10 backdrop-blur">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 bg-white rounded-md flex items-center justify-center shadow-sm shadow-black/30">
               <span className="text-gray-900 text-xs font-bold">A</span>
@@ -40,13 +40,13 @@ export default function AdminDashboard() {
             <div className="w-8 h-8 rounded-full bg-white text-gray-900 font-bold flex items-center justify-center text-sm">
               {user.firstName.charAt(0).toUpperCase()}
             </div>
-            <span className="text-sm">{user.firstName}</span>
+            <span className="hidden sm:inline text-sm">{user.firstName}</span>
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-10 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-10 relative z-10">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold text-white">Problem Management</h1>
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
             onClick={() => navigate('/admin/create')}
             className="w-full bg-[#0f172a] border border-gray-800 rounded-xl p-6 text-left hover:border-gray-600 hover:-translate-y-0.5 transition-all group"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/10 border border-gray-700 flex items-center justify-center shrink-0">
                 <span className="text-white text-xl font-light">+</span>
               </div>
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
                 <div className="text-sm font-medium text-white mb-0.5">Create problem</div>
                 <div className="text-xs text-gray-400">Add a new coding challenge with test cases and solutions</div>
               </div>
-              <span className="text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
+              <span className="hidden sm:inline text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
             </div>
           </button>
 
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
             onClick={() => navigate('/admin/delete')}
             className="w-full bg-[#0f172a] border border-gray-800 rounded-xl p-6 text-left hover:border-gray-600 hover:-translate-y-0.5 transition-all group"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/10 border border-gray-700 flex items-center justify-center shrink-0">
                 <span className="text-white text-xl font-light">−</span>
               </div>
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
                 <div className="text-sm font-medium text-white mb-0.5">Delete problem</div>
                 <div className="text-xs text-gray-400">Remove an existing problem permanently from the platform</div>
               </div>
-              <span className="text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
+              <span className="hidden sm:inline text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
             </div>
           </button>
 
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
             onClick={() => navigate('/admin/update')}
             className="w-full bg-[#0f172a] border border-gray-800 rounded-xl p-6 text-left hover:border-gray-600 hover:-translate-y-0.5 transition-all group"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/10 border border-gray-700 flex items-center justify-center shrink-0">
                 <span className="text-white text-xl font-light">✎</span>
               </div>
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
                 <div className="text-sm font-medium text-white mb-0.5">Update problem</div>
                 <div className="text-xs text-gray-400">Edit title, description, test cases or solution for any problem</div>
               </div>
-              <span className="text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
+              <span className="hidden sm:inline text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
             </div>
           </button>
 
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
             onClick={() => navigate('/admin/upload-videos')}
             className="w-full bg-[#0f172a] border border-gray-800 rounded-xl p-6 text-left hover:border-gray-600 hover:-translate-y-0.5 transition-all group"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/10 border border-gray-700 flex items-center justify-center shrink-0">
                 <span className="text-white text-xl font-light">📹</span>
               </div>
@@ -115,13 +115,13 @@ export default function AdminDashboard() {
                 <div className="text-sm font-medium text-white mb-0.5">Upload videos</div>
                 <div className="text-xs text-gray-400">Add new tutorial videos in bulk via CSV or JSON files</div>
               </div>
-              <span className="text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
+              <span className="hidden sm:inline text-gray-500 group-hover:text-white transition-colors text-lg">→</span>
             </div>
           </button>
         </div>
 
         {/* Info Cards */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-[#0f172a] border border-gray-800 rounded-xl p-4">
             <div className="text-xs text-gray-500 mb-1">Total Problems</div>
             <div className="text-2xl font-semibold text-white">24</div>

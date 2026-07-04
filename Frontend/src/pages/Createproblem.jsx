@@ -187,11 +187,11 @@ function Createproblem() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f1a] text-white py-10">
-      <div className="w-[80%] mx-auto">
+    <div className="min-h-screen bg-[#0b0f1a] text-white px-4 py-6 sm:py-10">
+      <div className="w-full max-w-6xl mx-auto">
 
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold">
             Create Problem
           </h1>
 
@@ -210,7 +210,7 @@ function Createproblem() {
 
           {/* BASIC INFO */}
 
-          <div className="bg-zinc-900 p-6 rounded-xl space-y-4">
+          <div className="bg-zinc-900 p-4 sm:p-6 rounded-xl space-y-4">
 
             <div>
               <label className="block mb-2">
@@ -247,7 +247,7 @@ function Createproblem() {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               <div>
                 <label className="block mb-2">
@@ -302,10 +302,10 @@ function Createproblem() {
 
           {/* VISIBLE TEST CASES */}
 
-          <div className="bg-zinc-900 p-6 rounded-xl">
+          <div className="bg-zinc-900 p-4 sm:p-6 rounded-xl">
 
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-2xl font-semibold">
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-5">
+              <h2 className="text-xl sm:text-2xl font-semibold">
                 Visible Test Cases
               </h2>
 
@@ -372,10 +372,10 @@ function Createproblem() {
 
           {/* HIDDEN TEST CASES */}
 
-          <div className="bg-zinc-900 p-6 rounded-xl">
+          <div className="bg-zinc-900 p-4 sm:p-6 rounded-xl">
 
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-2xl font-semibold">
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-5">
+              <h2 className="text-xl sm:text-2xl font-semibold">
                 Hidden Test Cases
               </h2>
 
@@ -442,9 +442,9 @@ function Createproblem() {
 
           {/* CODE SECTION */}
 
-          <div className="bg-zinc-900 p-6 rounded-xl">
+          <div className="bg-zinc-900 p-4 sm:p-6 rounded-xl">
 
-            <h2 className="text-2xl font-semibold mb-5">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-5">
               Code Templates
             </h2>
 
@@ -460,9 +460,9 @@ function Createproblem() {
                     {lang.label}
                   </div>
 
-                  <div className="grid grid-cols-2">
+                  <div className="grid grid-cols-1 lg:grid-cols-2">
 
-                    <div className="p-4 border-r border-zinc-700">
+                    <div className="p-4 border-b border-zinc-700 lg:border-b-0 lg:border-r">
                       <p className="mb-2 text-sm">
                         Starter Code
                       </p>
@@ -522,7 +522,7 @@ function Createproblem() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-white text-black px-6 py-3 rounded-xl font-semibold"
+              className="w-full bg-white text-black px-6 py-3 rounded-xl font-semibold sm:w-auto"
             >
               {isSubmitting
                 ? "Publishing..."

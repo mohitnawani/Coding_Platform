@@ -42,9 +42,9 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 flex items-center justify-center px-4 py-8 relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
-      <div className="w-full max-w-md bg-[#111827] border border-gray-800/80 rounded-2xl shadow-2xl p-8 relative z-10">
+      <div className="w-full max-w-md bg-[#111827] border border-gray-800/80 rounded-2xl shadow-2xl p-5 sm:p-8 relative z-10">
         <div className="mb-6 text-center">
           <p className="text-sm font-semibold text-gray-400 tracking-wide uppercase">Welcome back</p>
           <h2 className="text-3xl font-black text-white">Login</h2>

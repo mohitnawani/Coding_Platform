@@ -32,9 +32,9 @@ const Updateproblem = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 px-6 py-10">
+    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 px-4 sm:px-6 py-8 sm:py-10">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Admin · Update</p>
             <h1 className="text-2xl font-semibold text-white">Update Problems</h1>
@@ -69,7 +69,7 @@ const Updateproblem = () => {
                 className="rounded-xl bg-[#0f172a] border border-gray-800 p-4 flex flex-col gap-3 hover:border-gray-600 transition"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-white line-clamp-2">{p.title}</p>
                     <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>
                   </div>

@@ -1,266 +1,88 @@
-🚀 Coder – Full Stack Coding Platform
-
-A full-stack coding platform inspired by LeetCode where users can practice Data Structures & Algorithms problems, solve challenges, and track their progress.
-
-The platform integrates Judge0 API for secure and scalable online code execution.
-
-📌 Project Status
-
-✅ Backend Completed
-
-✅ Frontend Completed
-
-✅ Judge0 Integrated for Code Execution
-
-✅ Leaderboard System Implemented
-
-✅ Submission History & User Dashboard Live
-
-🛠️ Tech Stack
-🔹 Backend
-
-Node.js
-
-Express.js
-
-MongoDB
-
-Mongoose
-
-JWT Authentication
-
-Judge0 API Integration
-
-RESTful APIs
-
-🔹 Frontend
-
-React.js
-
-React Router
-
-Context API
-
-Responsive UI
-
-Tailwind CSS / CSS Modules
-
-🔹 Additional Tools
-
-Redis (Caching)
-
-Socket.io (Real-time Features)
-
-✨ Features
-
-🔐 User Authentication (Signup / Login)
-- Secure JWT-based authentication
-- Email verification
-- Password reset functionality
-
-🔒 Protected Routes using JWT
-
-🧠 Create & Solve Coding Problems
-- Problem creation with multiple test cases
-- Detailed problem descriptions and constraints
-
-⚡ Real-time Code Execution using Judge0
-- Support for multiple programming languages
-- Instant code compilation and execution
-
-📄 Problem Descriptions with Constraints
-
-🧪 Custom Test Case Support
-- Create and test custom test cases
-- View execution output and errors
-
-🛡️ Centralized Error Handling
-
-⚙️ Clean MVC Architecture
-
-🏆 Leaderboard System
-- Global leaderboard with rankings
-- Points-based scoring system
-- User statistics and achievements
-
-📊 Submission History
-- Track all code submissions
-- View submission details and results
-- Filter by status and programming language
-
-📈 User Dashboard
-- Personal statistics and performance metrics
-- Problem-solving progress visualization
-- Problem tags and difficulty filtering
-
-🌙 Dark Mode
-- System-wide dark/light theme support
-- Persistent theme preference
-
-🎓 Social Features
-- User profiles with achievements
-- Follow other users and compare stats
-- Discussion comments on problems
-
-⚡ Code Execution Engine
-
-This platform uses Judge0 API to:
-
-Compile and run code securely
-
-Support multiple programming languages (C++, Python, Java, JavaScript, Go, Rust, etc.)
-
-Execute custom test cases
-
-Return output, errors, and execution time
-
-Handle asynchronous submission polling
-
-🔁 Execution Flow
-
-User submits code
-
-Backend sends code to Judge0 API
-
-Judge0 processes compilation & execution
-
-Backend fetches result
-
-Output displayed to user in real-time
-
-🏗️ Architecture
-
-🔹 Backend Architecture
-
-The backend follows the MVC Pattern:
-
-backend/
-│── controllers/
-│── models/
-│── routes/
-│── middleware/
-│── config/
-│── services/ (Judge0 Integration)
-│── server.js
-
-Key Highlights
-
-Secure JWT Authentication
-
-Middleware-based Authorization
-
-Modular API Design
-
-Async Code Execution Handling
-
-Scalable Folder Structure
-
-🔹 Frontend Architecture
-
-frontend/
-│── src/
-│   ├── components/
-│   ├── pages/
-│   ├── hooks/
-│   ├── context/
-│   ├── services/
-│   └── App.js
-
-Key Highlights
-
-Component-based UI structure
-
-Reusable custom hooks
-
-Global state management with Context API
-
-API service abstraction layer
-
-Responsive design for all devices
-
-🚀 Getting Started
-1️⃣ Clone Repository
-
-git clone https://github.com/mohitnawani/Coding_Platform.git
-
-cd Coding_Platform
-
-2️⃣ Install Dependencies
-
-Backend:
-```
-cd backend
-npm install
+# Coding Platform Backend 🚀
+
+A robust, scalable backend for a competitive programming and Data Structures & Algorithms (DSA) learning platform. It provides a complete ecosystem for solving algorithmic problems, testing code against hidden test cases, AI-assisted learning, and community discussions.
+
+## 🌟 Key Features
+
+*   **🔐 Authentication & Authorization:**
+    *   Secure email/password registration and login using `bcrypt` and `JWT`.
+    *   Google OAuth 2.0 integration for seamless single sign-on (SSO).
+    *   Redis-backed token blocklisting for secure, stateful logouts.
+    *   Role-based access control (User vs. Admin roles).
+*   **📝 Problem Management:**
+    *   Full CRUD operations for coding problems for admins/instructors.
+    *   Support for visible/hidden test cases, starter code snippets across multiple languages, tags, and difficulty levels.
+    *   Automatic tracking of user-solved problems.
+*   **💻 Code Execution Engine:**
+    *   Submit and run code in various programming languages.
+    *   Batch test case execution with detailed feedback on compilation errors, runtime errors, execution time, and memory usage.
+*   **🤖 AI Doubt Solver (Gemini Integration):**
+    *   An intelligent, prompt-engineered DSA tutor powered by Google Gemini (`gemini-3-flash-preview`).
+    *   Provides hints, code reviews, complexity analysis, and approach suggestions without spoon-feeding the final code.
+*   **📹 Video Solutions:**
+    *   Direct Cloudinary integration to securely upload, store, and stream video solutions for specific problems.
+    *   Automatic thumbnail generation and video duration extraction.
+*   **💬 Community Comments:**
+    *   Problem-specific comment threads where users can discuss approaches and share insights.
+*   **📊 Submission History:**
+    *   Detailed history tracking for every code submission, allowing users to review their past attempts and code logic.
+
+## 🛠️ Tech Stack
+
+*   **Runtime Environment:** Node.js
+*   **Framework:** Express.js
+*   **Database:** MongoDB (via Mongoose)
+*   **Caching & Sessions:** Redis (Redis Cloud)
+*   **Authentication:** JSON Web Tokens (JWT), Google Auth Library
+*   **AI SDK:** `@google/genai` (Google Gemini)
+*   **Media Storage:** Cloudinary
+*   **Code Execution:** Integrated with third-party remote code execution APIs (via internal batch submission utilities).
+
+## ⚙️ Environment Variables Setup
+
+To run this project locally, create a `.env` file in the root directory and add the following keys:
+
+```env
+# Server
+PORT=3000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+
+# Databases
+DB_CONNECT_STRING=<your_mongodb_connection_string>
+REDIS_PASS=<your_redis_password>
+
+# Authentication
+JWT_KEY=<your_jwt_secret_key>
+CLIENT_ID=<your_google_oauth_client_id>
+CLIENT_SECRET=<your_google_oauth_client_secret>
+
+# Media / Cloudinary
+CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
+
+# AI Integration
+GOOGLE_API_KEY=<your_google_gemini_api_key>
 ```
 
-Frontend:
-```
-cd frontend
-npm install
-```
+## 🚀 Getting Started
 
-3️⃣ Setup Environment Variables
+1.  **Clone the repository**
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Start the development server:**
+    ```bash
+    node src/index.js
+    ```
 
-Create a .env file inside backend folder:
+## 📂 Folder Structure Highlights
 
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
-JUDGE0_API_KEY=your_judge0_api_key
-REDIS_URL=your_redis_connection_string (optional)
+*   `src/controllers/`: Contains the core business logic (auth, problem creation, code submission, AI tutor, video uploads, etc.).
+*   `src/models/`: Mongoose schemas for Users, Problems, Submissions, Comments, and Video Solutions.
+*   `src/routes/`: Express route definitions connecting HTTP endpoints to their respective controllers.
+*   `src/config/`: Configuration files for MongoDB, Redis, and Google Auth.
+*   `src/utils/`: Helper functions, including `problemUtility` for handling remote code execution tokens and validations.
 
-Create a .env file inside frontend folder:
-
-REACT_APP_API_URL=http://localhost:5000
-
-4️⃣ Start Development Servers
-
-Backend:
-```
-cd backend
-npm run dev
-```
-
-Frontend:
-```
-cd frontend
-npm start
-```
-
-Backend runs at: http://localhost:5000
-Frontend runs at: http://localhost:3000
-
-🎯 Project Goals
-
-✅ Build a scalable coding platform
-
-✅ Strengthen backend architecture skills
-
-✅ Implement real-world API integrations
-
-✅ Create engaging user experience with leaderboards and dashboards
-
-✅ Prepare for Software Engineering roles
-
-📸 Screenshots
-
-[Add screenshots of your application here]
-
-🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-📝 License
-
-This project is open source and available under the MIT License.
-
-👨‍💻 Author
-
-**Mohit Nawani**
-Final Year Student – DTU (Civil Engineering)
-Aspiring Software Developer
-
-For questions or suggestions, feel free to reach out!
-
-For questions or suggestions, feel free to reach out!

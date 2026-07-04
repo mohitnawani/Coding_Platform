@@ -40,8 +40,8 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-[#111827] border border-gray-800 rounded-2xl shadow-2xl p-8">
+    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md bg-[#111827] border border-gray-800 rounded-2xl shadow-2xl p-5 sm:p-8">
         <div className="mb-6 text-center">
           <p className="text-sm font-semibold text-gray-400 tracking-wide uppercase">Join the community</p>
           <h2 className="text-3xl font-black text-white">Create Account</h2>
