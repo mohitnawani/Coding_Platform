@@ -22,6 +22,16 @@ const DIFFICULTY_STYLE = {
   hard:   'bg-rose-500/10   text-rose-400   border border-rose-500/30',
 };
 
+const LEFT_TABS = [
+  { id: 'description', label: 'Problem' },
+  { id: 'testcases', label: 'Tests' },
+  { id: 'solutions', label: 'Solutions' },
+  { id: 'ai', label: 'AI' },
+  { id: 'editorial', label: 'Video' },
+  { id: 'submissions', label: 'Submissions' },
+  { id: 'comments', label: 'Comments' },
+];
+
 function ProblemPage() {
   const { id } = useParams();
   const editorRef = useRef(null);
@@ -209,18 +219,18 @@ return (
       <div className="flex flex-col min-h-0 border-b border-[#30363d] lg:w-[42%] lg:overflow-hidden lg:border-b-0 lg:border-r">
 
         {/* Left Tabs */}
-        <div className="flex border-b border-[#30363d] bg-[#161b22] shrink-0 overflow-x-auto">
-          {['description', 'testcases', 'solutions', 'ai', 'editorial', 'submissions', 'comments'].map(tab => (
+        <div className="flex w-full gap-2 overflow-x-auto overscroll-x-contain border-b border-[#30363d] bg-[#161b22] p-2 shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {LEFT_TABS.map(({ id, label }) => (
             <button
-              key={tab}
-              onClick={() => setActiveLeftTab(tab)}
-              className={`px-3 sm:px-5 py-3 text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap ${
-                activeLeftTab === tab
-                  ? 'text-cyan-400 border-b-2 border-cyan-400 bg-[#0d1117]'
-                  : 'text-gray-500 hover:text-gray-300'
+              key={id}
+              onClick={() => setActiveLeftTab(id)}
+              className={`min-w-max rounded-full border px-3 py-2 text-[11px] font-semibold uppercase tracking-normal transition-all sm:px-4 sm:text-xs ${
+                activeLeftTab === id
+                  ? 'border-cyan-500/50 bg-cyan-500/15 text-cyan-300'
+                  : 'border-[#30363d] bg-[#0d1117] text-gray-400 hover:border-gray-500 hover:text-gray-200'
               }`}
             >
-              {tab}
+              {label}
             </button>
           ))}
         </div>
