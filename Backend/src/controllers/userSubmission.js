@@ -85,6 +85,9 @@ const submitCode = async (req, res) => {
         } else if (test.status_id === 5) {
           status = "runtime_error";
           errorMessage = test.stderr || "Runtime error occurred";
+        } else if (test.status_id === 6) {
+          status = "time_limit_exceeded";
+          errorMessage = "Time limit exceeded";
         } else {
           status = "wrong_answer";
           errorMessage = `Test case ${testCasesPassed + 1} failed`;
@@ -196,6 +199,9 @@ const runCode = async (req, res) => {
         } else if (test.status_id === 5) {
           status = "runtime_error";
           message = test.stderr || "Runtime error";
+        } else if (test.status_id === 6) {
+          status = "time_limit_exceeded";
+          message = "Time limit exceeded";
         } else {
           status = "wrong_answer";
           message = "One or more test cases failed";

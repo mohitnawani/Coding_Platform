@@ -15,11 +15,7 @@ const toBase64 = (text = "") => Buffer.from(text, "utf-8").toString("base64");
 
 // })
 
-const waiting = async(timer)=>{
-  setTimeout(()=>{
-    return 1;
-  },timer);
-}
+const waiting = (timer) => new Promise((resolve) => setTimeout(resolve, timer));
 
 const submitBatch = async (submissions) => {
   // console.log(submissions);
@@ -88,7 +84,9 @@ const submitToken = async (tokens) => {
   console.log("Fetching Results");  
   while (true) {
     const result = await fetchData();
-    // console.log(result);
+    if (!result?.submissions) {
+      throw new Error("Unable to fetch submission results from Judge0");
+    }
 
     const IsResultObtained = result.submissions.every((r) => r.status_id > 2);
 

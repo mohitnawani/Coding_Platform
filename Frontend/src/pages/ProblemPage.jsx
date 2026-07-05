@@ -32,6 +32,18 @@ const LEFT_TABS = [
   { id: 'comments', label: 'Comments' },
 ];
 
+const languageMatches = (storedLanguage, selectedLanguage) => {
+  const normalized = String(storedLanguage || '').toLowerCase();
+  if (selectedLanguage === 'cpp') return normalized === 'c++' || normalized === 'cpp';
+  if (selectedLanguage === 'javascript') return normalized === 'javascript' || normalized === 'js';
+  return normalized === selectedLanguage;
+};
+
+const getStarterCode = (problemData, selectedLanguage) => {
+  const starter = problemData?.StartCode?.find((sc) => languageMatches(sc.language, selectedLanguage));
+  return starter?.initialCode ?? starter?.code ?? '';
+};
+
 function ProblemPage() {
   const { id } = useParams();
   const editorRef = useRef(null);
@@ -64,12 +76,7 @@ function ProblemPage() {
         setProblem(data);
 
 
-        const starter = data?.StartCode?.find((sc) => {
-          if (sc.language === 'C++'        && selectedLanguage === 'cpp')        return true;
-          if (sc.language === 'Java'       && selectedLanguage === 'java')       return true;
-          if (sc.language === 'Javascript' && selectedLanguage === 'javascript') return true;
-          return false;
-        })?.initialCode;
+        const starter = getStarterCode(data, selectedLanguage);
 
         if (starter) setCode(starter);
       } catch (err) {
@@ -142,31 +149,38 @@ const runProblem = async () => {
 
 const submitProblem = async () => {
   try{
+      setSubmitStatus('running');
+      setSubmitMessage('Submitting code...');
       if (!editorRef.current) return;
       const userCode = editorRef.current.getValue();
       console.log('Submitting code:', userCode); // 👈 check code
       const result = await submitcode(userCode, selectedLanguage, id);
       console.log('Submit Result:', result); // 👈 check response
       setSubmitResult(result);
+      setSubmitStatus(result?.status === 'accepted' ? 'success' : 'error');
+      setSubmitMessage(result?.message || 'Submission completed');
   }
 
   catch(err)
   {
       console.log(err);
+      setSubmitStatus('error');
+      setSubmitMessage(err?.response?.data?.error || err.message || 'Submit failed');
+      setSubmitResult({
+        status: 'error',
+        message: err?.response?.data?.error || err.message || 'Submit failed',
+        passed: 0,
+        total: 0,
+      });
   }
 }
 
   /* ── update code when language changes ── */
   useEffect(() => {
     if (!problem?.StartCode) return;
-    const starter = problem.StartCode.find((sc) => {
-      if (sc.language === 'C++'        && selectedLanguage === 'cpp')        return true;
-      if (sc.language === 'Java'       && selectedLanguage === 'java')       return true;
-      if (sc.language === 'Javascript' && selectedLanguage === 'javascript') return true;
-      return false;
-    })?.initialCode;
+    const starter = getStarterCode(problem, selectedLanguage);
     if (starter) setCode(starter);
-  }, [selectedLanguage]);
+  }, [problem, selectedLanguage]);
 
   // stopwatch tick
   useEffect(() => {
