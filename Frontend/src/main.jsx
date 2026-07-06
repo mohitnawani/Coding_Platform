@@ -7,9 +7,6 @@ import { Provider } from 'react-redux'
 import store from './store/store'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
-console.log("ENV:", import.meta.env);
-console.log("CLIENT:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
